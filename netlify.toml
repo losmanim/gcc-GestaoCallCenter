@@ -1,5 +1,4 @@
-	toml
-[build]
+	[build]
 	publish = "."
 	
 [[redirects]]
