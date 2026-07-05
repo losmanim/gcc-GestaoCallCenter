@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCC — Ferramenta de Vendas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css?v=3">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-md navbar-nos sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-lightning-fill"></i>
+          <span class="brand-wrap">
+            Gestão <span>Call Center</span>
+            <span class="brand-sub">Ferramenta de Vendas</span>
+          </span>
+      </a>
+      <div class="d-flex align-items-center gap-2 order-md-last">
+        <button class="dark-toggle" id="darkToggle" onclick="toggleDark()" aria-label="Alternar modo escuro">
+          <i class="bi bi-moon-fill"></i>
+          <i class="bi bi-telephone-forward-fill"></i>
+        </button>
+        <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-label="Menu">
+          <i class="bi bi-list fs-3"></i>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav ms-auto" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#prancha" type="button" role="tab"><i class="bi bi-speedometer2"></i>Prancha <kbd class="shortcut-hint">Alt+1</kbd></button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#script" type="button" role="tab"><i class="bi bi-chat-dots"></i>Script <kbd class="shortcut-hint">Alt+2</kbd></button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#processo" type="button" role="tab"><i class="bi bi-diagram-3"></i>Processo <kbd class="shortcut-hint">Alt+3</kbd></button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#objetos" type="button" role="tab"><i class="bi bi-shield-exclamation"></i>Objeções <kbd class="shortcut-hint">Alt+4</kbd></button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ferramentas" type="button" role="tab"><i class="bi bi-tools"></i>Ferramentas <kbd class="shortcut-hint">Alt+5</kbd></button></li>
+          <li class="nav-item"><a class="nav-link" href="gestao/index.html" target="_blank"><i class="bi bi-buildings-fill"></i>Gestão <kbd class="shortcut-hint">Clientes</kbd></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero-section">
+    <div class="container">
+      <h1><i class="bi bi-headset"></i> Pronto para vender?</h1>
+      <p>Segue o método, usa as ferramentas, acompanha os resultados. Cada chamada é uma oportunidade.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="number" id="hCalls">0</div><div class="label">Chamadas Hoje</div></div>
+        <div class="hero-stat"><div class="number" id="hSales">0</div><div class="label">Vendas Hoje</div></div>
+        <div class="hero-stat"><div class="number" id="hRate">0%</div><div class="label">Conversão</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="tab-content">
+
+      <!-- PRANCHA -->
+      <div class="tab-pane fade show active" id="prancha" role="tabpanel">
+        <h3 class="section-title"><i class="bi bi-speedometer2"></i> Prancha Rápida</h3>
+        <p class="text-muted small mb-3">Consulta rápida durante a chamada. <span class="badge-dica"><i class="bi bi-lightbulb"></i> Treina em frente ao espelho</span></p>
+        <div class="row g-3">
+          <div class="col-lg-8">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold mb-3"><i class="bi bi-list-ol"></i> Sequência da Chamada — 6 Passos</h5>
+              <div class="card-step"><span class="step-num">1</span> <strong>Abertura</strong> — Nome + Gestor + Motivo + "Tem 2 min?"</div>
+              <div class="card-step"><span class="step-num">2</span> <strong>Necessidade</strong> — Como está serviço? Equipamentos? Apoio?</div>
+              <div class="card-step"><span class="step-num">3</span> <strong>Validação</strong> — Valor atual? TV+Net+Voz+2móveis? CP? Fidelização? CVP?</div>
+              <div class="card-step"><span class="step-num">4</span> <strong>Proposta</strong> — Atual X€ vs Nova Y€. Poupança 312€. Bónus TV Cines</div>
+              <div class="card-step"><span class="step-num">5</span> <strong>Fecho</strong> — CC + Email + IBAN. "15min tem contrato"</div>
+              <div class="card-step"><span class="step-num">6</span> <strong>Follow-up</strong> — Acompanhar instalação, docs, evitar cancelamento</div>
+            </div></div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold mb-3"><i class="bi bi-lightning-fill"></i> 4 Gatilhos Psicológicos</h5>
+              <div class="trigger-grid">
+                <div class="trigger-item"><i class="bi bi-clock-history"></i><h6>Pressa</h6><p>"Oferta válida até meia-noite"</p></div>
+                <div class="trigger-item"><i class="bi bi-people-fill"></i><h6>Inveja</h6><p>"Os seus vizinhos já têm"</p></div>
+                <div class="trigger-item"><i class="bi bi-hand"></i><h6>Indiferença</h6><p>"Para mim é indiferente"</p></div>
+                <div class="trigger-item"><i class="bi bi-exclamation-triangle-fill"></i><h6>FOMO</h6><p>"Oferta exclusiva de hoje"</p></div>
+              </div>
+            </div></div>
+            <div class="card mt-3"><div class="card-body">
+              <h5 class="fw-bold mb-3"><i class="bi bi-file-earmark-text"></i> Docs p/ Fecho</h5>
+              <ul class="list-unstyled mb-0 small">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Cartão de Cidadão</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Email</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> IBAN</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> CVP (12 dígitos)</li>
+              </ul>
+            </div></div>
+          </div>
+        </div>
+        <div class="card mt-3"><div class="card-body">
+          <h5 class="fw-bold mb-3"><i class="bi bi-shield-exclamation"></i> Objeções — Respostas Rápidas</h5>
+          <div class="row g-2">
+            <div class="col-sm-6"><div class="obj-card"><div class="obj-pergunta">"Não tenho tempo"</div><div class="obj-resposta">"Só 1 minuto, confirme o valor que paga"</div></div></div>
+            <div class="col-sm-6"><div class="obj-card"><div class="obj-pergunta">"Já tenho bom preço"</div><div class="obj-resposta">"Ótimo. Vamos confirmar se está competitivo"</div></div></div>
+            <div class="col-sm-6"><div class="obj-card"><div class="obj-pergunta">"Não quero mudar"</div><div class="obj-resposta">"Percebo. Vou tentar ajudar dentro da sua operadora"</div></div></div>
+            <div class="col-sm-6"><div class="obj-card"><div class="obj-pergunta">"Tenho fidelização"</div><div class="obj-resposta">"Vamos confirmar data e encargos"</div></div></div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- SCRIPT -->
+      <div class="tab-pane fade" id="script" role="tabpanel">
+        <h3 class="section-title"><i class="bi bi-chat-dots"></i> Script Completo</h3>
+        <p class="text-muted small mb-3">Pitch completo para chamada. Lê em voz alta para treinar fluidez.</p>
+        <div class="script-box" id="scriptContent">
+          <button class="copy-btn" onclick="copyScript()"><i class="bi bi-clipboard"></i> Copiar</button>
+          <strong style="color:#fff;font-size:1rem;"><i class="bi bi-mic"></i> Pitch Completo — Abertura a Fecho</strong><br><br>
+          <span class="script-role">Tu:</span> "Boa tarde, estou a falar com <span style="color:#8ab4f8;">[NOME]</span>?"<br>
+          <span class="script-role">Tu:</span> "Sou gestora de telecomunicações, trabalho com várias operadoras para dar um acompanhamento mais eficaz ao cliente."<br><br>
+          <span class="script-role">Tu:</span> "O motivo da minha chamada é muito simples: verificamos que o seu contrato com a MEO está prestes a terminar, e nesta fase gostamos de tentar perceber junto do cliente se continua a ter uma boa oferta. Tem 2 minutos para avaliarmos a sua situação?"<br><br>
+          <span class="script-note">// Qualificação</span><br>
+          <span class="script-role">Tu:</span> "Antes de mais, como tem andado o serviço ao longo destes 2 anos?"<br>
+          <span class="script-role">Tu:</span> "Há quanto tempo os equipamentos não são trocados?"<br>
+          <span class="script-role">Tu:</span> "Está satisfeito com o apoio ao cliente?"<br>
+          <span class="script-role">Tu:</span> "A nível de mensalidade, quanto está a pagar de momento?"<br>
+          <span class="script-role">Tu:</span> "O seu serviço inclui TV, net, voz e 2 telemóveis, correto?"<br><br>
+          <span class="script-note">// Validação</span><br>
+          <span class="script-role">Tu:</span> "Aguarde só um momento enquanto verifico em sistema se já conseguimos uma oferta mais acessível para si na MEO."<br><br>
+          <span class="script-note">// Proposta</span><br>
+          <span class="script-role">Tu:</span> "Dona <span style="color:#8ab4f8;">[NOME]</span>, estive a verificar e neste momento não tem viabilidade para ofertas mais acessíveis por parte da MEO. Então temos duas opções:"<br><br>
+          <span class="script-role">Tu:</span> "Opção 1 — fica com TV, net, voz fixa, 180 canais e 2 telemóveis com 20GB, a pagar 70€ por mais 2 anos."<br>
+          <span class="script-role">Tu:</span> "Opção 2 — TV 180 canais, 1Gbps internet, voz fixa, 2 telemóveis <strong>ilimitados</strong>, equipamentos atualizados, tudo por apenas <strong>56,99€</strong>."<br><br>
+          <span class="script-role">Tu:</span> "Tenho a certeza de que é inteligente para saber que terá muitos mais benefícios. Ao fim de 2 anos são <strong>312€</strong> que mete ao bolso — seja para o seguro do carro ou para as compras do mês."<br><br>
+          <span class="script-note">// Diferenciação</span><br>
+          <span class="script-role">Tu:</span> "A partir deste momento fica com um gestor associado que sou eu, com acompanhamento personalizado. Sempre que precisar de algo, pode contactar-me diretamente."<br><br>
+          <span class="script-note">// Fecho</span><br>
+          <span class="script-role">Tu:</span> "Para avançar e começar já a poupar no próximo mês, preciso do seu CC, email e IBAN. Daqui a 15 minutos já tem do seu lado o contrato e o agendamento técnico."<br><br>
+          <span class="script-note">// Upsell TV Cines</span><br>
+          <span class="script-role">Tu:</span> "Gosta de ver filmes? Por aderir hoje, vou dar-lhe acesso gratuito aos TV Cines durante 24 meses e desconto nos cinemas NOS — 2 bilhetes pelo preço de 1."<br><br>
+          <span class="script-role">Tu:</span> "É importante que envie os documentos quanto antes — a campanha é limitada e temos vários clientes interessados."<br>
+          <span class="script-role">Tu:</span> "Um resto de um bom dia!"<br>
+        </div>
+        <div class="row g-3 mt-3">
+          <div class="col-md-6">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold"><i class="bi bi-people"></i> Perfil A — Satisfeito mas curioso</h5>
+              <p class="small mb-2">"Até nem me posso queixar, funciona bem."</p>
+              <div class="small">"Ainda bem. E há quanto tempo não trocam os equipamentos? Pois, é exatamente por isso que lhe estou a ligar — hoje temos uma campanha de renovação com equipamentos novos e valor inferior."</div>
+            </div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold"><i class="bi bi-emoji-frown"></i> Perfil B — Insatisfeito</h5>
+              <p class="small mb-2">"A net cai todos os dias."</p>
+              <div class="small">"Infelizmente é um feedback que ouço com frequência. Esse é exatamente o motivo do meu contacto — temos uma oferta pensada para clientes que precisam de estabilidade. Já ouviu falar da fibra NOS?"</div>
+            </div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold"><i class="bi bi-lightning"></i> Perfil C — Apressado</h5>
+              <p class="small mb-2">"Não tenho tempo."</p>
+              <div class="small">"Percebo, nem 1 minuto demora. Só preciso de saber o valor da sua fatura para ver se vale a pena continuarmos. Se não compensar, nem perde mais tempo."</div>
+            </div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold"><i class="bi bi-camera-reels"></i> TV Cines — Upsell</h5>
+              <div class="small">Sempre que fechar, pergunta: <strong>"Gosta de ver filmes?"</strong> — Oferece TV Cines grátis 24 meses + Desconto cinemas NOS. Isto aumenta o valor percebido e acelera o fecho.</div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROCESSO -->
+      <div class="tab-pane fade" id="processo" role="tabpanel">
+        <h3 class="section-title"><i class="bi bi-diagram-3"></i> Processo de Venda — 6 Passos</h3>
+        <p class="text-muted small mb-3">Cada passo é essencial. Não saltar etapas.</p>
+        <div class="row g-3">
+          <div class="col-md-6 col-lg-4"><div class="card h-100"><div class="card-body"><h5 class="fw-bold"><span class="badge bg-danger me-1">1</span> Abertura</h5><ul class="small mb-0 ps-3"><li>Identifica-te: nome + gestor telecom</li><li>Confirma o cliente</li><li>Explica motivo: contrato a terminar</li><li>Pede 2 min para avaliar situação</li></ul></div></div></div>
+          <div class="col-md-6 col-lg-4"><div class="card h-100"><div class="card-body"><h5 class="fw-bold"><span class="badge bg-danger me-1">2</span> Necessidade</h5><ul class="small mb-0 ps-3"><li>Como tem andado o serviço?</li><li>Equipamentos trocados há quanto?</li><li>Satisfeito com apoio ao cliente?</li><li>Quanto paga de momento?</li><li>TV+Net+Voz+2móveis?</li></ul></div></div></div>
+          <div class="col-md-6 col-lg-4"><div class="card h-100"><div class="card-body"><h5 class="fw-bold"><span class="badge bg-danger me-1">3</span> Validação</h5><ul class="small mb-0 ps-3"><li>Confirmar código postal (fibra)</li><li>Verificar fidelização</li><li>Pedir CVP (12 dígitos)</li><li>Confirmar titularidade</li></ul></div></div></div>
+          <div class="col-md-6 col-lg-4"><div class="card h-100"><div class="card-body"><h5 class="fw-bold"><span class="badge bg-danger me-1">4</span> Proposta</h5><ul class="small mb-0 ps-3"><li>Atual: X€ com YGB e canais</li><li>Nova: valor inferior + mais benefícios</li><li>Poupança total: 312€ em 2 anos</li><li>Bónus: TV Cines grátis 24 meses</li></ul></div></div></div>
+          <div class="col-md-6 col-lg-4"><div class="card h-100"><div class="card-body"><h5 class="fw-bold"><span class="badge bg-danger me-1">5</span> Fecho</h5><ul class="small mb-0 ps-3"><li>Pedir Cartão de Cidadão</li><li>Pedir Email</li><li>Pedir IBAN</li><li>"15 min tem contrato + agendamento"</li></ul></div></div></div>
+          <div class="col-md-6 col-lg-4"><div class="card h-100"><div class="card-body"><h5 class="fw-bold"><span class="badge bg-danger me-1">6</span> Follow-up</h5><ul class="small mb-0 ps-3"><li>Acompanhar até instalação/ativação</li><li>Garantir documentação completa</li><li>Reduzir cancelamentos</li><li>Pós-venda de qualidade</li></ul></div></div></div>
+        </div>
+        <div class="card mt-3"><div class="card-body">
+          <h5 class="fw-bold mb-3"><i class="bi bi-box"></i> Produtos NOS — Referência Rápida</h5>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead><tr><th>Pacote</th><th>Inclui</th><th>Detalhe</th></tr></thead>
+              <tbody>
+                <tr><td><strong>3P</strong></td><td>TV + Internet + Telefone fixo</td><td class="small text-muted">SEM telemóvel</td></tr>
+                <tr><td><strong>4P</strong></td><td>TV + Internet + Telefone + Móvel</td><td class="small text-muted">Com telemóvel no pacote</td></tr>
+                <tr><td colspan="3" class="small text-muted"><strong>Equipamentos:</strong> Router | Box | ONT | Extensor/Mesh | SIM/eSIM | App TV</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- OBJEÇÕES -->
+      <div class="tab-pane fade" id="objetos" role="tabpanel">
+        <h3 class="section-title"><i class="bi bi-shield-exclamation"></i> Objeções & Contra-Argumentos</h3>
+        <p class="text-muted small mb-3">
+          <strong>Técnica principal:</strong> <span class="badge-dica"><i class="bi bi-check-lg"></i> Concorda</span>
+          <span class="badge-dica"><i class="bi bi-arrow-right"></i> Esclarece</span>
+          <span class="badge-dica"><i class="bi bi-question-lg"></i> Pergunta</span>
+          — Nunca entrar em confronto. A objeção é um pedido de mais informação.
+        </p>
+
+        <div class="row g-3">
+
+          <!-- ABERTURA -->
+          <div class="col-12">
+            <h5 class="fw-bold mb-2"><i class="bi bi-door-open"></i> Objeções de Abertura</h5>
+            <p class="text-muted small mb-2">Cliente tenta evitar a chamada antes de saber do que se trata.</p>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Não estou interessado."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Perfeito, nem quero que esteja. Mas diga-me uma coisa: o valor que paga hoje é justo para aquilo que recebe?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Desarma ao concordar. A pergunta reengaja a curiosidade.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Não tenho tempo."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Claro, nem 1 minuto demora. Só preciso de saber o valor da sua fatura atual para ver se vale a pena continuarmos noutra altura. Se não compensar, nem perde mais tempo."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Reduz o compromisso a 1 minuto. Cria curiosidade sobre o valor.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Mande um email com a proposta."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Prefiro enviar a proposta certa para não o estar a chatear com informações que não servem. Diz-me: quanto paga e o que tem incluído? Em 30 segundos digo-lhe se vale a pena."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Mostra consideração. Troca email por qualificação rápida.</div>
+            </div>
+          </div>
+
+          <!-- PREÇO -->
+          <div class="col-12 mt-2">
+            <h5 class="fw-bold mb-2"><i class="bi bi-cash-coin"></i> Objeções de Preço</h5>
+            <p class="text-muted small mb-2">Cliente sente que está a pagar demais ou não vê valor na mudança.</p>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "É muito caro."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Percebo. Mas comparado com o que paga hoje, fica X€ mais barato. E ao fim de 2 anos estamos a falar de <strong>312€ de diferença</strong>. Onde é que prefere gastar esse dinheiro — seguro do carro ou compras do mês?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Reenquadra o preço como poupança. A pergunta final força a visualizar o benefício.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Já tenho bom preço na MEO."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Ainda bem que está satisfeito. Exatamente por isso é que vale a pena confirmar — se o seu preço já é competitivo, ótimo, fica a saber. Se não for, poupa dinheiro. Só ganha. Quanto está a pagar?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Reforça a confiança dele. "Só ganha" elimina o risco percebido.</div>
+            </div>
+          </div>
+
+          <!-- RELACIONAMENTO -->
+          <div class="col-12 mt-2">
+            <h5 class="fw-bold mb-2"><i class="bi bi-people"></i> Objeções de Relacionamento</h5>
+            <p class="text-muted small mb-2">Cliente tem receio da mudança ou fidelização com o operador atual.</p>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Não quero mudar de operadora."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Percebo perfeitamente. Também não quero que mude — quero é ajudar a encontrar a melhor solução dentro da operadora que tem. Só para ter uma ideia: quanto está a pagar e o que tem incluído?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Tira a pressão da mudança. Foca-se em ajudar, não em vender.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Tenho fidelização."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Sem problema. Primeiro vamos confirmar a data de fim e os eventuais encargos. Muitas vezes a fidelização já está perto de acabar e o valor compensa a saída. Tem a fatura à mão?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Não descarta — valida. Pode estar a terminar ou o valor compensar.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Tenho de falar com o meu marido/mulher."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Claro, é importante decidirem juntos. O que acha de eu enviar a proposta por email para verem os dois? Preciso só do seu email e do IBAN para deixar a proposta reservada — sem compromisso, se não quiserem, cancelamos."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Não força a decisão. Cria uma reserva de baixo risco que aumenta o compromisso.</div>
+            </div>
+          </div>
+
+          <!-- COMPARAÇÃO -->
+          <div class="col-12 mt-2">
+            <h5 class="fw-bold mb-2"><i class="bi bi-arrow-left-right"></i> Objeções de Comparação</h5>
+            <p class="text-muted small mb-2">Cliente compara a NOS com a concorrência (MEO, Vodafone).</p>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "A MEO tem melhor cobertura onde vivo."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Pode ser verdade. Vou validar a sua morada agora mesmo — se tivermos cobertura fibra, tem a vantagem de ter concorrência e poder escolher. Se não tivermos, ao menos fica a saber. Qual é o seu código postal?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Não discute. Valida no sistema. A transparência gera confiança.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "O pack MEO é mais completo."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "O que é que o pack MEO tem que a NOS não tenha? Vou comparar ponto por ponto consigo: canais, velocidade, telemóveis, preço. Se for mesmo melhor para si, sou o primeiro a dizer para ficar na MEO."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Desafia a comparação. Ao fazer questão a questão, expõe se é real ou perceção.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Já tenho NOS, estou satisfeito."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Ótimo, já conhece a qualidade. Esta campanha é precisamente para clientes como você que estão a terminar fidelização. Podemos otimizar o seu pacote atual e baixar o valor. Quando foi a última vez que renegociou?"</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Cliente satisfeito é o mais fácil — já confia na marca. Basta mostrar que pode poupar.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "A NOS tem pior apoio ao cliente."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Já tivemos essa perceção no passado, sim. Hoje temos apoio 24h por chat, app e telefone. E mais importante: <strong>a partir de agora, eu sou o seu contacto direto</strong>. Qualquer problema, liga-me a mim. Não precisa de lidar com ninguém."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Reconhece a objeção sem se defender. O diferencial é o acompanhamento personalizado.</div>
+            </div>
+          </div>
+
+          <!-- MUDANÇA -->
+          <div class="col-12 mt-2">
+            <h5 class="fw-bold mb-2"><i class="bi bi-truck"></i> Objeções de Processo</h5>
+            <p class="text-muted small mb-2">Cliente tem receio do trabalho que dá mudar.</p>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Não quero trocar, é uma chatice."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Percebo, parece que dá trabalho. Mas a boa notícia é que <strong>nós tratamos de tudo</strong>: contactamos a MEO, tratamos da portabilidade do número, agendamos a instalação. O/a senhor/a só precisa de estar em casa no dia combinado. Nós fazemos o trabalho pesado."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> Elimina a fricção. Mostra que o esforço é zero para o cliente.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="obj-card">
+              <div class="obj-pergunta"><i class="bi bi-x-circle"></i> "Vou pensar."</div>
+              <div class="obj-resposta"><strong class="text-success">Certo:</strong> "Claro, é uma decisão importante. O que é que precisa de pensar mais? É o preço, o serviço, ou a mudança em si? Se for o preço, a campanha termina hoje à meia-noite e não posso garantir o valor amanhã."</div>
+              <div class="mt-1 small text-muted"><i class="bi bi-lightbulb"></i> "Vou pensar" é a objeção disfarçada. Pergunta para descobrir a real. Se for preço, usa urgência.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FRASES PODEROSAS + TÉCNICA -->
+        <div class="row g-3 mt-3">
+          <div class="col-lg-7">
+            <div class="card h-100"><div class="card-body">
+              <h5 class="fw-bold mb-3"><i class="bi bi-stars"></i> Frases Poderosas — Gatilhos Psicológicos</h5>
+              <div class="row g-2">
+                <div class="col-sm-6">
+                  <div class="obj-card" style="border-left-color:var(--accent);">
+                    <div class="obj-pergunta" style="font-size:.9rem;"><i class="bi bi-clock-history"></i> Urgência</div>
+                    <div class="obj-resposta" style="font-size:.85rem;">"Oferta válida até à meia-noite. Tenho mais 3 clientes interessados."</div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="obj-card" style="border-left-color:var(--accent);">
+                    <div class="obj-pergunta" style="font-size:.9rem;"><i class="bi bi-people-fill"></i> Prova Social</div>
+                    <div class="obj-resposta" style="font-size:.85rem;">"Os seus vizinhos já estão a usufruir do desconto. Toda a gente tem os equipamentos mais recentes."</div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="obj-card" style="border-left-color:var(--accent);">
+                    <div class="obj-pergunta" style="font-size:.9rem;"><i class="bi bi-hand"></i> Indiferença</div>
+                    <div class="obj-resposta" style="font-size:.85rem;">"Para mim é indiferente se escolhe MEO, NOS ou Vodafone. Não ganho mais por isso."</div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="obj-card" style="border-left-color:var(--accent);">
+                    <div class="obj-pergunta" style="font-size:.9rem;"><i class="bi bi-exclamation-triangle-fill"></i> FOMO</div>
+                    <div class="obj-resposta" style="font-size:.85rem;">"Por estar a falar consigo hoje, tenho uma oferta exclusiva que não posso garantir amanhã."</div>
+                  </div>
+                </div>
+              </div>
+            </div></div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card h-100 border-success"><div class="card-body">
+              <h5 class="fw-bold text-success mb-2"><i class="bi bi-journal-check"></i> Regra de Ouro</h5>
+              <p class="small mb-2">A objeção não é um "não". <strong>É um pedido de mais informação.</strong></p>
+              <ol class="small mb-0 ps-3">
+                <li class="mb-1"><strong>Escuta</strong> — não interrompas. Deixa o cliente falar.</li>
+                <li class="mb-1"><strong>Valida</strong> — "Percebo.", "Faz sentido.", "Compreendo."</li>
+                <li class="mb-1"><strong>Reformula</strong> — "Então o que me está a dizer é que..."</li>
+                <li class="mb-1"><strong>Responde</strong> — factos, não opiniões. Usa números.</li>
+                <li class="mb-1"><strong>Confirma</strong> — "Isto responde à sua questão?"</li>
+              </ol>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FERRAMENTAS -->
+      <div class="tab-pane fade" id="ferramentas" role="tabpanel">
+        <h3 class="section-title"><i class="bi bi-tools"></i> Ferramentas de Treino</h3>
+        <p class="text-muted small mb-3">Regista o teu progresso e segue a rotina diária.</p>
+        <div class="row g-3">
+          <div class="col-lg-7">
+            <div class="card"><div class="card-body">
+              <h5 class="fw-bold mb-3"><i class="bi bi-graph-up"></i> Registo de Performance</h5>
+              <div class="kpi-form">
+                <div class="row g-2 mb-2">
+                  <div class="col-6 col-md-3">
+                    <input type="number" class="form-control" id="kpiCalls" placeholder="Chamadas" min="0">
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <input type="number" class="form-control" id="kpiContacts" placeholder="Contactos" min="0">
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <input type="number" class="form-control" id="kpiProposals" placeholder="Propostas" min="0">
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <input type="number" class="form-control" id="kpiSales" placeholder="Vendas" min="0">
+                  </div>
+                </div>
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <input type="text" class="form-control" id="kpiObj" placeholder="Objeção mais comum">
+                  </div>
+                  <div class="col-6">
+                    <input type="text" class="form-control" id="kpiImprove" placeholder="Melhoria para amanhã">
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-nos w-100" onclick="addKpi()"><i class="bi bi-plus-lg"></i> Registar Dia</button>
+                  </div>
+                </div>
+              </div>
+              <div id="funnelSummary"></div>
+              <div class="table-responsive">
+                <table class="table table-sm table-striped" id="kpiTable">
+                  <thead><tr><th>Dia</th><th>Chamadas</th><th>Contactos</th><th>Propostas</th><th>Vendas</th><th>Conv%</th><th>Ctt%</th><th>Prop%</th><th>Fecho%</th><th>Objeção</th><th>Melhoria</th></tr></thead>
+                  <tbody id="kpiBody"></tbody>
+                </table>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+                <span><strong>Metas:</strong> 50-80 chamadas · 15-25 contactos · 5-10 propostas · 2-4 vendas · 3-5% conv. global</span>
+                <button class="btn btn-sm btn-outline-nos" onclick="clearKpi()"><i class="bi bi-trash"></i> Limpar</button>
+              </div>
+            </div></div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card"><div class="card-body">
+               <div class="d-flex justify-content-between align-items-center">
+                 <h5 class="fw-bold mb-0"><i class="bi bi-check2-square"></i> Checklist Pré-Chamada</h5>
+                 <button class="btn btn-sm btn-outline-nos" onclick="resetPreChecklist()"><i class="bi bi-arrow-counterclockwise"></i> Resetar</button>
+               </div>
+              <div id="checklistPre">
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this)"> Ler prancha rápida em voz alta (1min)</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this)"> Dizer script abertura 3x seguidas (2min)</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this)"> Escolher 3 objeções e responder (1min)</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this)"> Respirar fundo + sorrir (30s)</label>
+              </div>
+            </div></div>
+            <div class="card mt-3"><div class="card-body">
+              <h5 class="fw-bold mb-3"><i class="bi bi-clock"></i> Rotina Diária</h5>
+              <div class="small">
+                <div class="d-flex justify-content-between border-bottom py-1"><span>09:00-09:10</span><span class="text-muted">Aquecimento</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>09:10-10:30</span><span class="text-muted">Chamadas (abertura + qualificação)</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>10:30-10:40</span><span class="text-muted">Pausa + revisão</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>10:40-12:00</span><span class="text-muted">Chamadas (foco: fecho)</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>12:00-13:00</span><span class="text-muted">Almoço</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>13:00-14:30</span><span class="text-muted">Chamadas (objeções difíceis)</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>14:30-14:40</span><span class="text-muted">Pausa + registo vendas</span></div>
+                <div class="d-flex justify-content-between border-bottom py-1"><span>14:40-16:00</span><span class="text-muted">Último bloco + follow-ups</span></div>
+                <div class="d-flex justify-content-between py-1"><span>16:00-16:15</span><span class="text-muted">Autoavaliação</span></div>
+              </div>
+            </div></div>
+            <div class="card mt-3"><div class="card-body">
+               <div class="d-flex justify-content-between align-items-center">
+                 <h5 class="fw-bold mb-0"><i class="bi bi-clipboard-check"></i> Pós-Chamada (5s)</h5>
+                 <button class="btn btn-sm btn-outline-nos" onclick="resetPosChecklist()"><i class="bi bi-arrow-counterclockwise"></i> Resetar</button>
+               </div>
+              <div id="checklistPos">
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this); updatePosResult();"> Qualifiquei o cliente (valor + necessidades)?</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this); updatePosResult();"> Cobri a objeção principal?</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this); updatePosResult();"> Cliente disse "sim" ou "vou pensar"?</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this); updatePosResult();"> Pedi CC/email/IBAN?</label>
+                <label class="checklist-item"><input type="checkbox" onchange="saveCheck(this); updatePosResult();"> Registei follow-up?</label>
+              </div>
+              <div id="posResult" class="mt-2 small fw-bold"></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6"><div class="card border-danger"><div class="card-body">
+            <h5 class="fw-bold"><i class="bi bi-x-circle"></i> O que NUNCA fazer</h5>
+            <ul class="small mb-0 ps-3">
+              <li>Prometer preço sem confirmar campanha</li>
+              <li>Ignorar fidelização ou custos de cancelamento</li>
+              <li>Pedir dados sem explicar o motivo</li>
+              <li>Dizer que "é fibra" sem testar cobertura</li>
+              <li>Fechar sem confirmar titularidade e consentimento</li>
+            </ul>
+          </div></div></div>
+          <div class="col-md-6"><div class="card border-success"><div class="card-body">
+            <h5 class="fw-bold"><i class="bi bi-check-circle"></i> O que SEMPRE fazer</h5>
+            <ul class="small mb-0 ps-3">
+              <li>Confirmar no sistema</li>
+              <li>Explicar de forma simples e honesta</li>
+              <li>Pedir fatura com autorização</li>
+              <li>Validar morada e código postal</li>
+              <li>Registar tudo para pós-venda</li>
+            </ul>
+          </div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="offcanvas-trigger d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-label="Menu">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title"><i class="bi bi-lightning-fill"></i> GCC</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <div class="list-group list-group-flush">
+        <button class="list-group-item" data-bs-toggle="tab" data-bs-target="#prancha" type="button" onclick="closeMobile()">
+          <i class="bi bi-speedometer2"></i>
+          <span class="item-text">
+            <span class="item-title">Prancha Rápida</span>
+            <span class="item-desc">Passos, gatilhos e docs</span>
+          </span>
+        </button>
+        <button class="list-group-item" data-bs-toggle="tab" data-bs-target="#script" type="button" onclick="closeMobile()">
+          <i class="bi bi-chat-dots"></i>
+          <span class="item-text">
+            <span class="item-title">Script</span>
+            <span class="item-desc">Pitch completo da chamada</span>
+          </span>
+        </button>
+        <button class="list-group-item" data-bs-toggle="tab" data-bs-target="#processo" type="button" onclick="closeMobile()">
+          <i class="bi bi-diagram-3"></i>
+          <span class="item-text">
+            <span class="item-title">Processo</span>
+            <span class="item-desc">6 passos da venda</span>
+          </span>
+        </button>
+        <button class="list-group-item" data-bs-toggle="tab" data-bs-target="#objetos" type="button" onclick="closeMobile()">
+          <i class="bi bi-shield-exclamation"></i>
+          <span class="item-text">
+            <span class="item-title">Objeções</span>
+            <span class="item-desc">Respostas + contra-argumentos</span>
+          </span>
+        </button>
+        <button class="list-group-item" data-bs-toggle="tab" data-bs-target="#ferramentas" type="button" onclick="closeMobile()">
+          <i class="bi bi-tools"></i>
+          <span class="item-text">
+            <span class="item-title">Ferramentas</span>
+            <span class="item-desc">KPI, checklists e rotina</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <i class="bi bi-lightning-fill"></i> Lz_ntn — <strong>Ferramenta de Vendas</strong> &middot; Ninguém nasce vendedor. Aprende-se com método, repetição e respeito pelo cliente.
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js?v=3"></script>
+</body>
+</html>

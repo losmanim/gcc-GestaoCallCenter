@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão Call Center — Gestão de Clientes</title>
+  <link rel="stylesheet" href="css/style.css?v=1">
+  <style>
+    .login-cred {
+      text-align: center; margin-top: 1.5rem;
+      padding: 0.75rem; border-radius: var(--radius);
+      background: var(--slate-50); font-size: 0.75rem; color: var(--slate-500);
+      border: 1px solid var(--slate-200);
+    }
+    .login-cred code { background: var(--slate-200); padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.75rem; }
+  </style>
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <h1 class="login-title">Gestão Call Center</h1>
+      <p class="login-subtitle">Gestão de Clientes — Acesso Restrito</p>
+
+      <form class="login-form" id="loginForm" autocomplete="off">
+        <div id="loginError" class="error-msg" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span id="loginErrorText">Email ou senha inválidos.</span>
+        </div>
+
+        <label class="field">
+          <span class="field-label">E-mail</span>
+          <input type="email" name="email" class="input" placeholder="admin@gcc.pt" autocomplete="username" value="admin@gcc.pt" required>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Senha</span>
+          <input type="password" name="senha" class="input" autocomplete="current-password" value="admin123" required>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+      </form>
+
+      <div class="login-cred">
+        <strong>Credenciais de teste:</strong><br>
+        <code>admin@gcc.pt</code> / <code>admin123</code>
+        &middot;
+        <code>gestor@gcc.pt</code> / <code>gestor123</code>
+      </div>
+    </div>
+    <div class="login-footer">
+      &copy; 2026 Gestão Call Center &middot; <a href="../vendas.html" style="color:rgba(255,255,255,0.5);text-decoration:none">Ferramenta de Vendas</a> &middot; <a href="../index.html" style="color:rgba(255,255,255,0.5);text-decoration:none">Site</a>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    (function() {
+      if (Auth.isLoggedIn()) { window.location.href = 'dashboard.html'; return; }
+
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = this.email.value.trim();
+        const senha = this.senha.value.trim();
+        const errorEl = document.getElementById('loginError');
+        const errorText = document.getElementById('loginErrorText');
+
+        if (!email || !senha) {
+          errorText.textContent = 'Preenche o email e a senha.';
+          errorEl.style.display = 'flex';
+          return;
+        }
+
+        const result = Auth.login(email, senha);
+        if (result.success) {
+          window.location.href = 'dashboard.html';
+        } else {
+          errorText.textContent = result.error;
+          errorEl.style.display = 'flex';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

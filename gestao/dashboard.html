@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão Call Center — Gestão de Clientes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div>
+          <div class="sidebar-title">Gestão Call Center</div>
+          <div class="sidebar-subtitle">Gestão de Clientes</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-page="dashboard">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          Dashboard
+        </button>
+        <button class="sidebar-link" data-page="clientes">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          Clientes
+        </button>
+        <button class="sidebar-link" data-page="servicos">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+          Serviços
+        </button>
+        <button class="sidebar-link" data-page="contratos">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          Contratos
+        </button>
+        <button class="sidebar-link" data-page="leads" style="position:relative">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+          Leads
+          <span id="leadsBadge" class="badge-notif" style="display:none">0</span>
+        </button>
+        <button class="sidebar-link" data-page="relatorios">
+          <span class="sidebar-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+          Relatórios
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <strong id="userName">—</strong><br>
+          <span id="userEmail">—</span>
+        </div>
+        <button class="sidebar-pwd" id="changePwdBtn" onclick="abrirModalAlterarSenha()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Alterar Senha
+        </button>
+        <button class="sidebar-logout" id="logoutBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- PAGE: DASHBOARD -->
+      <div class="page-content" id="page-dashboard" style="display:block">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Visão geral da carteira de clientes e serviços ativos</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Total Clientes</div><div class="kpi-value" id="kpiClientes">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Contratos Ativos</div><div class="kpi-value" id="kpiContratos">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Receita Mensal</div><div class="kpi-value" id="kpiReceita">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Pendentes Aprovação</div><div class="kpi-value amber" id="kpiPendentes">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Novos Leads</div><div class="kpi-value" id="kpiLeads">0</div></div>
+        </div>
+
+        <div class="card-grid-2">
+          <div class="card">
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> Clientes por Operadora</div>
+            <div class="bar-chart" id="graficoOperadoras"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Serviços Ativos</div>
+            <div class="bar-chart" id="graficoServicos"></div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0">
+          <div class="card-title" style="padding:1rem 1.5rem 0;margin-bottom:0.5rem">Últimos Clientes Registados</div>
+          <div class="table-wrapper" style="border:none;box-shadow:none;border-radius:0">
+            <table class="table">
+              <thead><tr><th>Nome</th><th>Operadora</th><th>Serviço</th><th>Valor</th><th>Estado</th></tr></thead>
+              <tbody id="tabelaUltimos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: CLIENTES -->
+      <div class="page-content" id="page-clientes" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Clientes</h1>
+            <p class="page-subtitle">Gestão da carteira de clientes</p>
+          </div>
+          <button class="btn btn-primary" onclick="abrirFormCliente()">+ Novo Cliente</button>
+        </div>
+
+        <div class="card" style="padding:1rem">
+          <div class="form-grid form-grid-4" style="margin-bottom:1rem">
+            <div class="field">
+              <input type="text" class="input" id="filtroCli" placeholder="Pesquisar nome, email, NIF..." oninput="renderClientes()">
+            </div>
+            <div class="field">
+              <select class="select" id="filtroCliOp" onchange="renderClientes()">
+                <option value="">Todas operadoras</option>
+                <option value="NOS">NOS</option>
+                <option value="MEO">MEO</option>
+                <option value="Vodafone">Vodafone</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="select" id="filtroCliEst" onchange="renderClientes()">
+                <option value="">Todos estados</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Suspenso">Suspenso</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Nome</th><th>Email</th><th>NIF</th><th>Telefone</th><th>Operadora</th><th>IBAN</th><th>CVP</th><th>Estado</th><th>Ações</th></tr></thead>
+              <tbody id="tabelaClientes"></tbody>
+            </table>
+          </div>
+          <p style="margin-top:0.5rem;font-size:0.8rem;color:var(--slate-400)" id="totalClientesCount">0 clientes</p>
+        </div>
+      </div>
+
+      <!-- PAGE: SERVIÇOS -->
+      <div class="page-content" id="page-servicos" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Serviços</h1>
+            <p class="page-subtitle">Catálogo de serviços NOS, MEO e Vodafone</p>
+          </div>
+          <button class="btn btn-primary" onclick="abrirFormServico()">+ Novo Serviço</button>
+        </div>
+
+        <div class="card" style="padding:1rem;margin-bottom:1rem">
+          <div class="form-grid form-grid-4">
+            <div class="field">
+              <select class="select" id="filtroServOp" onchange="renderServicos()">
+                <option value="">Todas operadoras</option>
+                <option value="NOS">NOS</option>
+                <option value="MEO">MEO</option>
+                <option value="Vodafone">Vodafone</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="select" id="filtroServTp" onchange="renderServicos()">
+                <option value="">Todos tipos</option>
+                <option value="3P">3P (TV+Net+Voz)</option>
+                <option value="4P">4P (TV+Net+Voz+Móvel)</option>
+                <option value="Móvel">Móvel</option>
+                <option value="Internet">Internet</option>
+                <option value="TV">TV</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="servico-grid" id="gradeServicos"></div>
+      </div>
+
+      <!-- PAGE: CONTRATOS -->
+      <div class="page-content" id="page-contratos" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Contratos</h1>
+            <p class="page-subtitle">Gestão de contratos e envio para aprovação do cliente</p>
+          </div>
+          <button class="btn btn-primary" onclick="abrirFormContrato()">+ Novo Contrato</button>
+        </div>
+
+        <div class="card" style="padding:1rem;margin-bottom:1rem">
+          <div class="form-grid form-grid-4">
+            <div class="field">
+              <input type="text" class="input" id="filtroContr" placeholder="Pesquisar cliente..." oninput="renderContratos()">
+            </div>
+            <div class="field">
+              <select class="select" id="filtroContrEst" onchange="renderContratos()">
+                <option value="">Todos estados</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Suspenso">Suspenso</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="table">
+            <thead><tr><th>Cliente</th><th>Serviço</th><th>Operadora</th><th>Valor</th><th>Início</th><th>Fim</th><th>Estado</th><th>Ações</th></tr></thead>
+            <tbody id="tabelaContratos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE: LEADS -->
+      <div class="page-content" id="page-leads" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Leads</h1>
+            <p class="page-subtitle">Novos pedidos de contacto vindos do site de propaganda</p>
+          </div>
+          <button class="btn btn-secondary" onclick="exportarLeadsCSV()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportar</button>
+        </div>
+
+        <div class="card" style="padding:1rem">
+          <div class="form-grid form-grid-4" style="margin-bottom:1rem">
+            <div class="field">
+              <input type="text" class="input" id="filtroLeads" placeholder="Pesquisar nome, email..." oninput="renderLeads()">
+            </div>
+            <div class="field">
+              <select class="select" id="filtroLeadsOp" onchange="renderLeads()">
+                <option value="">Todas operadoras</option>
+                <option value="NOS">NOS</option>
+                <option value="MEO">MEO</option>
+                <option value="Vodafone">Vodafone</option>
+              </select>
+            </div>
+            <div class="field">
+              <select class="select" id="filtroLeadsLido" onchange="renderLeads()">
+                <option value="">Todos</option>
+                <option value="nao">Não lidos</option>
+                <option value="sim">Lidos</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Telefone</th><th>Operadora</th><th>Mensagem</th><th>Estado</th><th>Ações</th></tr></thead>
+              <tbody id="tabelaLeads"></tbody>
+            </table>
+          </div>
+          <p style="margin-top:0.5rem;font-size:0.8rem;color:var(--slate-400)" id="totalLeadsCount">0 leads</p>
+        </div>
+      </div>
+
+      <!-- PAGE: RELATÓRIOS -->
+      <div class="page-content" id="page-relatorios" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Relatórios</h1>
+            <p class="page-subtitle">Análise de dados e exportação</p>
+          </div>
+        </div>
+
+        <div class="card-grid-2">
+          <div class="card">
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 8 9 9"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 8 15 9"/><path d="M4 22h16"/><path d="M10 22V2h4v20"/></svg> Top Clientes (maior receita)</div>
+            <div id="topClientes"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> Receita por Operadora</div>
+            <div class="bar-chart" id="receitaOperadora"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1rem">
+          <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportar Dados</div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="exportarCSV('clientes')">Exportar Clientes</button>
+            <button class="btn btn-secondary" onclick="exportarCSV('servicos')">Exportar Serviços</button>
+            <button class="btn btn-secondary" onclick="exportarCSV('contratos')">Exportar Contratos</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL CLIENTE -->
+  <div class="modal-overlay" id="modalCliente">
+    <div class="modal">
+      <h3 class="modal-title" id="modalClienteTitulo">Novo Cliente</h3>
+      <input type="hidden" id="cliId">
+      <div class="form-grid form-grid-2">
+        <div class="field"><span class="field-label">Nome *</span><input type="text" class="input" id="cliNome" placeholder="Nome completo"></div>
+        <div class="field"><span class="field-label">Email</span><input type="email" class="input" id="cliEmail" placeholder="email@exemplo.pt"></div>
+        <div class="field"><span class="field-label">Telefone</span><input type="text" class="input" id="cliTel" placeholder="912345678"></div>
+        <div class="field"><span class="field-label">NIF</span><input type="text" class="input" id="cliNif" placeholder="123456789"></div>
+        <div class="field"><span class="field-label">Operadora *</span>
+          <select class="select" id="cliOp"><option value="">Selecionar</option><option value="NOS">NOS</option><option value="MEO">MEO</option><option value="Vodafone">Vodafone</option></select>
+        </div>
+        <div class="field"><span class="field-label">Estado</span>
+          <select class="select" id="cliEst"><option value="Ativo">Ativo</option><option value="Suspenso">Suspenso</option><option value="Cancelado">Cancelado</option></select>
+        </div>
+        <div class="field"><span class="field-label">IBAN</span><input type="text" class="input" id="cliIban" placeholder="PT50 0000 0000 0000 0000 0000 0"></div>
+        <div class="field"><span class="field-label">CVP (12 dígitos)</span><input type="text" class="input" id="cliCvp" placeholder="000000000000"></div>
+        <div class="field"><span class="field-label">Morada</span><input type="text" class="input" id="cliMorada" placeholder="Rua, nº"></div>
+        <div class="field"><span class="field-label">Código Postal</span><input type="text" class="input" id="cliCp" placeholder="1000-001"></div>
+        <div style="grid-column:1/-1"><div class="field"><span class="field-label">Notas</span><textarea class="textarea" id="cliNotas" rows="2" placeholder="Observações..."></textarea></div></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalCliente')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarCliente()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SERVIÇO -->
+  <div class="modal-overlay" id="modalServico">
+    <div class="modal">
+      <h3 class="modal-title" id="modalServicoTitulo">Novo Serviço</h3>
+      <input type="hidden" id="servId">
+      <div class="form-grid form-grid-2">
+        <div class="field"><span class="field-label">Nome *</span><input type="text" class="input" id="servNome" placeholder="Ex: 4P 1Gbps"></div>
+        <div class="field"><span class="field-label">Operadora *</span>
+          <select class="select" id="servOp"><option value="">Selecionar</option><option value="NOS">NOS</option><option value="MEO">MEO</option><option value="Vodafone">Vodafone</option></select>
+        </div>
+        <div class="field"><span class="field-label">Tipo *</span>
+          <select class="select" id="servTipo"><option value="">Selecionar</option><option value="3P">3P (TV+Net+Voz)</option><option value="4P">4P (TV+Net+Voz+Móvel)</option><option value="Móvel">Móvel</option><option value="Internet">Internet</option><option value="TV">TV</option></select>
+        </div>
+        <div class="field"><span class="field-label">Preço Mensal (€)</span><input type="number" class="input" id="servPreco" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="field"><span class="field-label">Velocidade</span><input type="text" class="input" id="servVel" placeholder="Ex: 1Gbps"></div>
+        <div class="field"><span class="field-label">Canais</span><input type="text" class="input" id="servCanais" placeholder="Ex: 180"></div>
+        <div class="field"><span class="field-label">Telemóveis</span><input type="text" class="input" id="servMoveis" placeholder="Ex: 2x20GB"></div>
+        <div style="grid-column:1/-1"><div class="field"><span class="field-label">Descrição</span><textarea class="textarea" id="servDesc" rows="2" placeholder="Descrição do serviço..."></textarea></div></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalServico')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarServico()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONTRATO -->
+  <div class="modal-overlay" id="modalContrato">
+    <div class="modal">
+      <h3 class="modal-title" id="modalContratoTitulo">Novo Contrato</h3>
+      <input type="hidden" id="contrId">
+      <div class="form-grid form-grid-2">
+        <div style="grid-column:1/-1"><div class="field"><span class="field-label">Cliente *</span><select class="select" id="contrCli"></select></div></div>
+        <div style="grid-column:1/-1"><div class="field"><span class="field-label">Serviço *</span><select class="select" id="contrServ"></select></div></div>
+        <div class="field"><span class="field-label">Data de Início</span><input type="date" class="input" id="contrInicio"></div>
+        <div class="field"><span class="field-label">Data de Fim (fidelização)</span><input type="date" class="input" id="contrFim"></div>
+        <div class="field"><span class="field-label">Valor Acordado (€)</span><input type="number" class="input" id="contrValor" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="field"><span class="field-label">Estado</span>
+          <select class="select" id="contrEst"><option value="Pendente">Pendente</option><option value="Ativo">Ativo</option><option value="Cancelado">Cancelado</option><option value="Suspenso">Suspenso</option></select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalContrato')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarContrato()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL PREVIEW -->
+  <div class="modal-overlay hidden" id="emailPreview" style="display:none">
+    <div class="modal modal-wide">
+      <h3 class="modal-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email de Aprovação Enviado
+      </h3>
+      <p style="font-size:0.875rem;color:var(--slate-500);margin-bottom:1rem">
+        O seguinte email foi simulado. Na produção, seria enviado automaticamente para o cliente.
+      </p>
+      <div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius-lg);padding:1.25rem">
+        <div style="font-size:0.8rem;color:var(--slate-500);margin-bottom:0.75rem">
+          <strong>Para:</strong> <span id="emailPreviewEmail">—</span><br>
+          <strong>Assunto:</strong> Aprovação de Contrato — Gestão Call Center
+        </div>
+        <div style="font-size:0.875rem;color:var(--slate-700);margin-bottom:1rem">
+          Olá <strong id="emailPreviewCliente">—</strong>,<br><br>
+          O seu gestor enviou-lhe um contrato para aprovação. Clique no link abaixo para ver os detalhes e aprovar ou rejeitar:<br><br>
+          <a href="#" id="emailPreviewLink" target="_blank" style="color:var(--accent);font-weight:600;word-break:break-all">—</a><br><br>
+          Obrigado,<br>
+          Equipa Gestão Call Center
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="fecharPreviewEmail()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ALTERAR SENHA -->
+  <div class="modal-overlay" id="modalAlterarSenha">
+    <div class="modal" style="max-width:400px">
+      <h3 class="modal-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Alterar Senha
+      </h3>
+      <div class="field" style="margin-bottom:0.75rem">
+        <span class="field-label">Senha Atual *</span>
+        <input type="password" class="input" id="pwdAtual" placeholder="Senha atual">
+      </div>
+      <div class="field" style="margin-bottom:0.75rem">
+        <span class="field-label">Nova Senha *</span>
+        <input type="password" class="input" id="pwdNova" placeholder="Nova senha">
+      </div>
+      <div class="field" style="margin-bottom:1rem">
+        <span class="field-label">Confirmar Nova Senha *</span>
+        <input type="password" class="input" id="pwdConfirmar" placeholder="Confirmar nova senha">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalAlterarSenha')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarAlterarSenha()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <style>
+    .hidden { display: none !important; }
+    .badge-notif {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: #dc2626; color: #fff; font-size: 0.65rem; font-weight: 700;
+      min-width: 20px; height: 20px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 5px; line-height: 1;
+    }
+    .lead-nao-lido { font-weight: 600; background: #fffbeb !important; }
+    body.dark-mode .lead-nao-lido { background: rgba(217,119,6,0.1) !important; }
+    .lead-btn-lido { font-size: 0.7rem; padding: 0.2rem 0.5rem; }
+    #emailPreview.hidden { display: none !important; }
+    #emailPreview { display: flex !important; }
+    #emailPreview.hidden { display: none !important; }
+  </style>
+</body>
+</html>
