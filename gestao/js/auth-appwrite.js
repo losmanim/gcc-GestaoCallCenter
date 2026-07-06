@@ -3,7 +3,7 @@ var account = new Appwrite.Account(sdk);
 window.Auth = {
   login: async function(email, password) {
     try {
-      await account.createEmailSession(email, password);
+      await account.createEmailPasswordSession(email, password);
       var user = await account.get();
       return { success: true, user: { email: user.email, nome: user.name, tipo: 'gestor' } };
     } catch (error) {
