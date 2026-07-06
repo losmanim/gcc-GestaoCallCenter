@@ -172,7 +172,7 @@
         if (!ultimos.length) { el.innerHTML = '<tr><td colspan="5" class="text-center" style="color:var(--slate-400);padding:2rem">Nenhum cliente registado</td></tr>'; return; }
         el.innerHTML = ultimos.map(function(c) {
             const ct = contratos.filter(function(x) { return x.clienteId === c.id; });
-            const sNome = ct.length ? (servicos.find(function(x) { return x.id === ct[0].servicoId; }) ? .nome || '\u2014') : '\u2014';
+            const sNome = ct.length ? (servicos.find(function(x) { return x.id === ct[0].servicoId; }) ?.nome || '\u2014') : '\u2014';
             const valor = ct.length ? (parseFloat(ct[0].valor) || 0).toFixed(2) + '&euro;' : '\u2014';
             const est = ct.length ? ct[0].estado : 'Sem contrato';
             return '<tr><td class="td-bold">' + esc(c.nome) + '</td><td><span class="tag-op tag-' + c.operadora.toLowerCase() + '">' + c.operadora + '</span></td><td>' + esc(sNome) + '</td><td>' + valor + '</td><td><span class="badge badge-' + est.toLowerCase() + '">' + est + '</span></td></tr>';
@@ -184,9 +184,9 @@
     /* ===== CLIENTES ===== */
     function renderClientes() {
         const clientes = getClientes();
-        const f = (document.getElementById('filtroCli') ? .value || '').toLowerCase();
-        const op = document.getElementById('filtroCliOp') ? .value || '';
-        const est = document.getElementById('filtroCliEst') ? .value || '';
+        const f = (document.getElementById('filtroCli') ?.value || '').toLowerCase();
+        const op = document.getElementById('filtroCliOp') ?.value || '';
+        const est = document.getElementById('filtroCliEst') ?.value || '';
         const el = document.getElementById('tabelaClientes');
         const ct = document.getElementById('totalClientesCount');
 
@@ -281,8 +281,8 @@
     /* ===== SERVI\u00c7OS ===== */
     function renderServicos() {
         const servicos = getServicos();
-        const op = document.getElementById('filtroServOp') ? .value || '';
-        const tp = document.getElementById('filtroServTp') ? .value || '';
+        const op = document.getElementById('filtroServOp') ?.value || '';
+        const tp = document.getElementById('filtroServTp') ?.value || '';
         const el = document.getElementById('gradeServicos');
         let lista = servicos.filter(function(s) {
             if (op && s.operadora !== op) return false;
@@ -362,8 +362,8 @@
         const servicos = getServicos();
         const contratos = getContratos();
         const aprovacoes = getAprovacoes();
-        const f = (document.getElementById('filtroContr') ? .value || '').toLowerCase();
-        const est = document.getElementById('filtroContrEst') ? .value || '';
+        const f = (document.getElementById('filtroContr') ?.value || '').toLowerCase();
+        const est = document.getElementById('filtroContrEst') ?.value || '';
         const el = document.getElementById('tabelaContratos');
         let lista = contratos.filter(function(c) {
             if (est && c.estado !== est) return false;
@@ -584,9 +584,9 @@
 
     /* ===== LEADS ===== */
     window.renderLeads = function() {
-        var f = (document.getElementById('filtroLeads') ? .value || '').toLowerCase();
-        var op = document.getElementById('filtroLeadsOp') ? .value || '';
-        var filtroLido = document.getElementById('filtroLeadsLido') ? .value || '';
+        var f = (document.getElementById('filtroLeads') ?.value || '').toLowerCase();
+        var op = document.getElementById('filtroLeadsOp') ?.value || '';
+        var filtroLido = document.getElementById('filtroLeadsLido') ?.value || '';
         var leads = getLeads();
         var el = document.getElementById('tabelaLeads');
         var ct = document.getElementById('totalLeadsCount');
@@ -692,7 +692,7 @@
         document.getElementById('modalAlterarSenha').classList.add('open');
     };
 
-    window.salvarAlterarSenha = function() {
+    window.salvarAlterarSenha = async function() {
         const atual = document.getElementById('pwdAtual').value;
         const nova = document.getElementById('pwdNova').value;
         const confirmar = document.getElementById('pwdConfirmar').value;
