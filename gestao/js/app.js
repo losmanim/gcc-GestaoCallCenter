@@ -26,10 +26,17 @@
           var item = dados[i];
           var docData = {};
           for (var k in item) { if (k !== '_appwriteId' && k !== 'id') docData[k] = item[k]; }
+          var permissions = [];
+          if (nome === 'aprovacoes') {
+            permissions = [
+              Appwrite.Permission.read(Appwrite.Role.any()),
+              Appwrite.Permission.update(Appwrite.Role.any()),
+            ];
+          }
           if (item._appwriteId) {
             await database.updateDocument(APPWRITE_DATABASE, nome, item._appwriteId, docData);
           } else {
-            var doc = await database.createDocument(APPWRITE_DATABASE, nome, 'unique()', docData);
+            var doc = await database.createDocument(APPWRITE_DATABASE, nome, 'unique()', docData, permissions);
             dados[i]._appwriteId = doc.$id;
           }
         }
@@ -473,7 +480,7 @@
         const link = window.location.origin + '/gestao/aprovacao.html?token=' + token;
 
         var aprovacoes = getAprovacoes();
-        aprovacoes.push({ token: token, contratoId: c.id, status: 'pendente', dataEnvio: today(), clienteNome: cl.nome, servicoNome: s.nome, operadora: s.operadora, valor: c.valor, leads: '' });
+        aprovacoes.push({ token: token, contratoId: c.id, status: 'pendente', dataEnvio: today(), clienteNome: cl.nome, servicoNome: s.nome, operadora: s.operadora, valor: c.valor });
         saveAprovacoes(aprovacoes);
 
         try {
@@ -554,7 +561,6 @@
             dataFim: document.getElementById('contrFim').value,
             valor: parseFloat(document.getElementById('contrValor').value) || 0,
             estado: document.getElementById('contrEst').value,
-            token: '',
         };
         if (!d.clienteId || !d.servicoId) { toast('Seleciona um cliente e um servi\u00e7o.', 'error'); return; }
         let contratos = getContratos();
@@ -795,9 +801,29 @@
         }
     }
 
+    /* ===== AUTO-PROCESS APPROVALS ===== */
+    function processarAprovacoes() {
+      var aprovacoes = getAprovacoes();
+      var contratos = getContratos();
+      var alterado = false;
+      aprovacoes.forEach(function(a) {
+        if (a.status === 'pendente') return;
+        var c = contratos.find(function(x) { return x.id === a.contratoId; });
+        if (c && c.estado !== 'Ativo' && c.estado !== 'Cancelado') {
+          c.estado = a.status === 'aprovado' ? 'Ativo' : 'Cancelado';
+          alterado = true;
+        }
+      });
+      if (alterado) {
+        localStorage.setItem(STORAGE_CONTRATOS, JSON.stringify(contratos));
+        syncColecao('contratos', contratos, STORAGE_CONTRATOS);
+      }
+    }
+
     /* ===== INIT ===== */
-    seedData();
     await carregarTudoAppwrite();
+    processarAprovacoes();
+    seedData();
     if (loadingEl) loadingEl.classList.add('hidden');
     initSidebar();
     renderDashboard();

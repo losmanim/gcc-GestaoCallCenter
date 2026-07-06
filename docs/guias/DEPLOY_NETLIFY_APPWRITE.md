@@ -383,6 +383,22 @@ EmailJS precisa de um "serviço" (que é a conta de email que vai enviar).
 </div>
 ```
 
+Link para aprovação: {{link}}
+Fica assim:
+Olá {{clienteNome}},
+
+O seu gestor enviou-lhe um contrato para aprovação.
+
+Serviço: {{servicoNome}}
+
+Operadora: {{operadora}}
+
+Valor: {{valor}}€/mês
+
+Link para aprovação: {{link}}
+
+
+
 5. Anota o **Template ID** (ex: `template_xyz789`) -> template_yodp801
 
 ### 4.4 Obter a chave de API (Public Key)
