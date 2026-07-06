@@ -475,7 +475,7 @@
         try {
             await emailjs.send(
                 'service_mail_gcc',
-                'template_yodp801',
+                'template_3bcn5ao',
                 {
                     clienteNome: cl.nome,
                     servicoNome: s.nome,
