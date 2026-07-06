@@ -18,13 +18,32 @@
 
     function getAprovacoes() { return JSON.parse(localStorage.getItem(APROVACOES_KEY) || '[]'); }
 
-    function saveClientes(v) { localStorage.setItem(STORAGE_CLIENTES, JSON.stringify(v)); }
+    async function syncColecao(nome, dados, storageKey) {
+      try {
+        for (var i = 0; i < dados.length; i++) {
+          var item = dados[i];
+          var docData = {};
+          for (var k in item) { if (k !== '_appwriteId') docData[k] = item[k]; }
+          if (item._appwriteId) {
+            await database.updateDocument(APPWRITE_DATABASE, nome, item._appwriteId, docData);
+          } else {
+            var doc = await database.createDocument(APPWRITE_DATABASE, nome, 'unique()', docData);
+            dados[i]._appwriteId = doc.$id;
+          }
+        }
+        localStorage.setItem(storageKey, JSON.stringify(dados));
+      } catch (e) {
+        console.warn('Erro sync ' + nome + ':', e);
+      }
+    }
 
-    function saveServicos(v) { localStorage.setItem(STORAGE_SERVICOS, JSON.stringify(v)); }
+    function saveClientes(v) { localStorage.setItem(STORAGE_CLIENTES, JSON.stringify(v)); syncColecao('clientes', v, STORAGE_CLIENTES); }
 
-    function saveContratos(v) { localStorage.setItem(STORAGE_CONTRATOS, JSON.stringify(v)); }
+    function saveServicos(v) { localStorage.setItem(STORAGE_SERVICOS, JSON.stringify(v)); syncColecao('servicos', v, STORAGE_SERVICOS); }
 
-    function saveAprovacoes(v) { localStorage.setItem(APROVACOES_KEY, JSON.stringify(v)); }
+    function saveContratos(v) { localStorage.setItem(STORAGE_CONTRATOS, JSON.stringify(v)); syncColecao('contratos', v, STORAGE_CONTRATOS); }
+
+    function saveAprovacoes(v) { localStorage.setItem(APROVACOES_KEY, JSON.stringify(v)); syncColecao('aprovacoes', v, APROVACOES_KEY); }
 
     function newId(arr) { return arr.length ? Math.max(...arr.map(i => i.id)) + 1 : 1; }
 
@@ -38,27 +57,40 @@
 
     function saveLeads(arr) {
         localStorage.setItem(LEADS_KEY, JSON.stringify(arr));
+        syncColecao('leads', arr, LEADS_KEY);
     }
 
-    async function syncLeadsFromAppwrite() {
-      try {
-        var res = await database.listDocuments(APPWRITE_DATABASE, 'leads');
-        if (!res.documents || !res.documents.length) return;
-        var appLeads = res.documents.map(function(d) {
-          return { _appwriteId: d.$id, id: d.id || Date.now() + Math.floor(Math.random() * 9999), nome: d.nome, email: d.email, telefone: d.telefone, operadora: d.operadora || 'N\u00e3o especificada', mensagem: d.mensagem || '\u2014', data: d.data || new Date().toISOString().slice(0, 10), lido: d.lido || false };
-        });
-        var localLeads = getLeads();
-        var merged = appLeads.slice();
-        localLeads.forEach(function(l) {
-          var jaExiste = l._appwriteId
-            ? merged.some(function(m) { return m._appwriteId === l._appwriteId; })
-            : merged.some(function(m) { return m.id === l.id; });
-          if (!jaExiste) merged.push(l);
-        });
-        merged.sort(function(a, b) { return b.id - a.id; });
-        saveLeads(merged);
-      } catch (e) {
-        console.warn('Erro ao sincronizar leads do Appwrite:', e);
+    async function carregarTudoAppwrite() {
+      var colecoes = ['clientes', 'servicos', 'contratos', 'aprovacoes', 'leads'];
+      var keys = {};
+      keys['clientes'] = STORAGE_CLIENTES;
+      keys['servicos'] = STORAGE_SERVICOS;
+      keys['contratos'] = STORAGE_CONTRATOS;
+      keys['aprovacoes'] = APROVACOES_KEY;
+      keys['leads'] = LEADS_KEY;
+      for (var n = 0; n < colecoes.length; n++) {
+        var nome = colecoes[n];
+        try {
+          var res = await database.listDocuments(APPWRITE_DATABASE, nome);
+          if (res.documents && res.documents.length) {
+            var items = res.documents.map(function(d) {
+              var item = { _appwriteId: d.$id };
+              for (var k in d) {
+                if (!k.startsWith('$')) item[k] = d[k];
+              }
+              return item;
+            });
+            var local = JSON.parse(localStorage.getItem(keys[nome]) || '[]');
+            var merged = items.slice();
+            local.forEach(function(l) {
+              var existe = merged.some(function(m) { return m._appwriteId && l._appwriteId ? m._appwriteId === l._appwriteId : m.id === l.id; });
+              if (!existe) merged.push(l);
+            });
+            localStorage.setItem(keys[nome], JSON.stringify(merged));
+          }
+        } catch (e) {
+          console.warn('Erro ao carregar ' + nome + ':', e);
+        }
       }
     }
 
@@ -748,7 +780,7 @@
 
     /* ===== INIT ===== */
     seedData();
-    await syncLeadsFromAppwrite();
+    await carregarTudoAppwrite();
     initSidebar();
     renderDashboard();
     renderLeads();
