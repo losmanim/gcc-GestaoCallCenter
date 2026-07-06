@@ -1,13 +1,12 @@
-	[build]
-	publish = "."
-	
+[build]
+publish = "."
+
 [[redirects]]
-	from = "/gestao/*"
-	to = "/gestao/index.html"
-	status = 200
-	
+  from = "/gestao/aprovacao.html*"
+  to = "/gestao/aprovacao.html"
+  status = 200
+
 [[redirects]]
-	from = "/gestao/aprovacao.html*"
-	to = "/gestao/aprovacao.html"
-	status = 200	
-			
+  from = "/gestao/*"
+  to = "/gestao/index.html"
+  status = 200
