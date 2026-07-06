@@ -45,14 +45,15 @@
         var res = await database.listDocuments(APPWRITE_DATABASE, 'leads');
         if (!res.documents || !res.documents.length) return;
         var appLeads = res.documents.map(function(d) {
-          return { id: d.id, nome: d.nome, email: d.email, telefone: d.telefone, operadora: d.operadora || 'N\u00e3o especificada', mensagem: d.mensagem || '\u2014', data: d.data || new Date().toISOString().slice(0, 10), lido: d.lido || false };
+          return { _appwriteId: d.$id, id: d.id || Date.now() + Math.floor(Math.random() * 9999), nome: d.nome, email: d.email, telefone: d.telefone, operadora: d.operadora || 'N\u00e3o especificada', mensagem: d.mensagem || '\u2014', data: d.data || new Date().toISOString().slice(0, 10), lido: d.lido || false };
         });
         var localLeads = getLeads();
         var merged = appLeads.slice();
         localLeads.forEach(function(l) {
-          if (!merged.some(function(m) { return m.id === l.id; })) {
-            merged.push(l);
-          }
+          var jaExiste = l._appwriteId
+            ? merged.some(function(m) { return m._appwriteId === l._appwriteId; })
+            : merged.some(function(m) { return m.id === l.id; });
+          if (!jaExiste) merged.push(l);
         });
         merged.sort(function(a, b) { return b.id - a.id; });
         saveLeads(merged);

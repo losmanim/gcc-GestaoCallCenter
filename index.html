@@ -286,7 +286,21 @@
 
     async function salvarLeadAppwrite(lead) {
       try {
-        await database.createDocument(APPWRITE_DATABASE, COLLECTION_LEADS, 'unique()', lead);
+        var doc = await database.createDocument(APPWRITE_DATABASE, COLLECTION_LEADS, 'unique()', {
+          nome: lead.nome,
+          email: lead.email,
+          telefone: lead.telefone,
+          operadora: lead.operadora,
+          mensagem: lead.mensagem,
+          data: lead.data,
+          lido: lead.lido
+        });
+        var leads = JSON.parse(localStorage.getItem('gcc_g_leads') || '[]');
+        var idx = leads.findIndex(function(l) { return l.id === lead.id; });
+        if (idx >= 0) {
+          leads[idx]._appwriteId = doc.$id;
+          localStorage.setItem('gcc_g_leads', JSON.stringify(leads));
+        }
       } catch (e) {
         console.warn('Erro ao guardar lead no Appwrite:', e);
       }
