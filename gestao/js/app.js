@@ -392,7 +392,7 @@
     }
     window.renderContratos = renderContratos;
 
-    window.enviarAprovacao = function(contratoId) {
+    window.enviarAprovacao = async function(contratoId) {
         const contratos = getContratos();
         const clientes = getClientes();
         const servicos = getServicos();
@@ -410,9 +410,9 @@
         saveAprovacoes(aprovacoes);
 
         try {
-            emailjs.send(
-                'SUBSTITUIR_PELO_TEU_SERVICE_ID',
-                'SUBSTITUIR_PELO_TEU_TEMPLATE_ID',
+            await emailjs.send(
+                'service_mail_gcc',
+                'template_yodp801',
                 {
                     clienteNome: cl.nome,
                     servicoNome: s.nome,
