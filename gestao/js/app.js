@@ -477,7 +477,7 @@
         if (!cl || !s) { toast('Cliente ou servi\u00e7o n\u00e3o encontrado', 'error'); return; }
 
         const token = 'aprov_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-        const link = window.location.origin + '/gestao/aprovacao.html?token=' + token;
+        const link = 'https://gcc-gestao-callcenter.vercel.app/gestao/aprovacao.html?token=' + token;
 
         var aprovacoes = getAprovacoes();
         aprovacoes.push({ token: token, contratoId: c.id, status: 'pendente', dataEnvio: today(), clienteNome: cl.nome, servicoNome: s.nome, operadora: s.operadora, valor: c.valor });
