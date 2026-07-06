@@ -4,6 +4,8 @@
     if (!window.Auth) return;
     if (!(await Auth.requireAuth())) return;
 
+    var loadingEl = document.getElementById('loadingOverlay');
+
     const STORAGE_CLIENTES = 'gcc_g_clientes';
     const STORAGE_SERVICOS = 'gcc_g_servicos';
     const STORAGE_CONTRATOS = 'gcc_g_contratos';
@@ -23,7 +25,7 @@
         for (var i = 0; i < dados.length; i++) {
           var item = dados[i];
           var docData = {};
-          for (var k in item) { if (k !== '_appwriteId') docData[k] = item[k]; }
+          for (var k in item) { if (k !== '_appwriteId' && k !== 'id') docData[k] = item[k]; }
           if (item._appwriteId) {
             await database.updateDocument(APPWRITE_DATABASE, nome, item._appwriteId, docData);
           } else {
@@ -49,7 +51,7 @@
 
     function today() { return new Date().toISOString().slice(0, 10); }
 
-    function fmtData(d) { if (!d) return '\u2014'; try { return new Date(d + 'T12:00:00').toLocaleDateString('pt-PT'); } catch (e) { return d; } }
+    function fmtData(d) { if (!d) return '\u2014'; try { return new Date(d.includes('T') ? d : d + 'T12:00:00').toLocaleString('pt-PT'); } catch (e) { return d; } }
 
     function getLeads() {
         return JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
@@ -668,7 +670,7 @@
 
         el.innerHTML = lista.map(function(l) {
             var rowClass = !l.lido ? ' class="lead-nao-lido"' : '';
-            var dataStr = l.data ? new Date(l.data + 'T12:00:00').toLocaleDateString('pt-PT') : '\u2014';
+            var dataStr = l.data ? new Date(l.data.includes('T') ? l.data : l.data + 'T12:00:00').toLocaleString('pt-PT') : '\u2014';
             var opTag = l.operadora && l.operadora !== 'N\u00e3o especificada' && l.operadora !== '\u2014' ?
                 '<span class="tag-op tag-' + l.operadora.toLowerCase() + '">' + esc(l.operadora) + '</span>' :
                 '<span style="color:var(--slate-400)">\u2014</span>';
@@ -791,6 +793,7 @@
     /* ===== INIT ===== */
     seedData();
     await carregarTudoAppwrite();
+    if (loadingEl) loadingEl.classList.add('hidden');
     initSidebar();
     renderDashboard();
     renderLeads();

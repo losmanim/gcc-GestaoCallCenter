@@ -354,7 +354,7 @@
           telefone: telefone,
           operadora: operadora || 'Não especificada',
           mensagem: mensagem || '—',
-          data: new Date().toISOString().slice(0, 10),
+          data: new Date().toISOString().slice(0, 16).replace('T', ' '),
           lido: false
         };
 
