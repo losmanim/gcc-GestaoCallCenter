@@ -40,6 +40,27 @@
         localStorage.setItem(LEADS_KEY, JSON.stringify(arr));
     }
 
+    async function syncLeadsFromAppwrite() {
+      try {
+        var res = await database.listDocuments(APPWRITE_DATABASE, 'leads');
+        if (!res.documents || !res.documents.length) return;
+        var appLeads = res.documents.map(function(d) {
+          return { id: d.id, nome: d.nome, email: d.email, telefone: d.telefone, operadora: d.operadora || 'N\u00e3o especificada', mensagem: d.mensagem || '\u2014', data: d.data || new Date().toISOString().slice(0, 10), lido: d.lido || false };
+        });
+        var localLeads = getLeads();
+        var merged = appLeads.slice();
+        localLeads.forEach(function(l) {
+          if (!merged.some(function(m) { return m.id === l.id; })) {
+            merged.push(l);
+          }
+        });
+        merged.sort(function(a, b) { return b.id - a.id; });
+        saveLeads(merged);
+      } catch (e) {
+        console.warn('Erro ao sincronizar leads do Appwrite:', e);
+      }
+    }
+
     function updateLeadsBadge() {
         var leads = getLeads();
         var naoLidos = leads.filter(function(l) { return !l.lido; }).length;
@@ -726,6 +747,7 @@
 
     /* ===== INIT ===== */
     seedData();
+    await syncLeadsFromAppwrite();
     initSidebar();
     renderDashboard();
     renderLeads();

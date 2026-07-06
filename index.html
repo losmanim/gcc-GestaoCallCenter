@@ -273,6 +273,25 @@
     <span style="font-size:0.75rem;opacity:0.6">&copy; 2026 &middot; <a href="vendas.html">Ferramenta de Vendas</a> &middot; <a href="gestao/index.html">Área do Gestor</a></span>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@14/dist/iife/sdk.js"></script>
+  <script>
+    var APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1';
+    var APPWRITE_PROJECT = '6a4a96ae00150f4aa36a';
+    var APPWRITE_DATABASE = '6a4a97150006afe07f8a';
+    var COLLECTION_LEADS = 'leads';
+
+    var sdk = new Appwrite.Client();
+    sdk.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT);
+    var database = new Appwrite.Databases(sdk);
+
+    async function salvarLeadAppwrite(lead) {
+      try {
+        await database.createDocument(APPWRITE_DATABASE, COLLECTION_LEADS, 'unique()', lead);
+      } catch (e) {
+        console.warn('Erro ao guardar lead no Appwrite:', e);
+      }
+    }
+  </script>
   <script>
     (function() {
       var form = document.getElementById('leadForm');
@@ -309,6 +328,8 @@
         var leads = JSON.parse(localStorage.getItem('gcc_g_leads') || '[]');
         leads.unshift(lead);
         localStorage.setItem('gcc_g_leads', JSON.stringify(leads));
+
+        salvarLeadAppwrite(lead);
 
         form.reset();
         sucesso.classList.add('show');
