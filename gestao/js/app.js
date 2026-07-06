@@ -10,19 +10,19 @@
   const APROVACOES_KEY = 'gcc_g_aprovacoes';
   const LEADS_KEY = 'gcc_g_leads';
 
-  let clientes = JSON.parse(localStorage.getItem(STORAGE_CLIENTES) || '[]');
-  let servicos = JSON.parse(localStorage.getItem(STORAGE_SERVICOS) || '[]');
-  let contratos = JSON.parse(localStorage.getItem(STORAGE_CONTRATOS) || '[]');
-  let aprovacoes = JSON.parse(localStorage.getItem(APROVACOES_KEY) || '[]');
+  function getClientes() { return JSON.parse(localStorage.getItem(STORAGE_CLIENTES) || '[]'); }
+  function getServicos() { return JSON.parse(localStorage.getItem(STORAGE_SERVICOS) || '[]'); }
+  function getContratos() { return JSON.parse(localStorage.getItem(STORAGE_CONTRATOS) || '[]'); }
+  function getAprovacoes() { return JSON.parse(localStorage.getItem(APROVACOES_KEY) || '[]'); }
 
-  function saveClientes() { localStorage.setItem(STORAGE_CLIENTES, JSON.stringify(clientes)); }
-  function saveServicos() { localStorage.setItem(STORAGE_SERVICOS, JSON.stringify(servicos)); }
-  function saveContratos() { localStorage.setItem(STORAGE_CONTRATOS, JSON.stringify(contratos)); }
-  function saveAprovacoes() { localStorage.setItem(APROVACOES_KEY, JSON.stringify(aprovacoes)); }
+  function saveClientes(v) { localStorage.setItem(STORAGE_CLIENTES, JSON.stringify(v)); }
+  function saveServicos(v) { localStorage.setItem(STORAGE_SERVICOS, JSON.stringify(v)); }
+  function saveContratos(v) { localStorage.setItem(STORAGE_CONTRATOS, JSON.stringify(v)); }
+  function saveAprovacoes(v) { localStorage.setItem(APROVACOES_KEY, JSON.stringify(v)); }
 
   function newId(arr) { return arr.length ? Math.max(...arr.map(i=>i.id)) + 1 : 1; }
   function today() { return new Date().toISOString().slice(0, 10); }
-  function fmtData(d) { if (!d) return '—'; try { return new Date(d + 'T12:00:00').toLocaleDateString('pt-PT'); } catch(e) { return d; } }
+  function fmtData(d) { if (!d) return '\u2014'; try { return new Date(d + 'T12:00:00').toLocaleDateString('pt-PT'); } catch(e) { return d; } }
 
   function getLeads() {
     return JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
@@ -80,20 +80,18 @@
     el.className = 'toast ' + (tipo || 'info');
     el.innerHTML = '<span>' + msg + '</span><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
     container.appendChild(el);
-    setTimeout(() => { if (el.parentElement) el.remove(); }, 4000);
-  }
-
-  /* ===== HELPER SVG ICONS ===== */
-  function svgIcon(path, color) {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg>';
+    setTimeout(function() { if (el.parentElement) el.remove(); }, 4000);
   }
 
   /* ===== DASHBOARD ===== */
   function renderDashboard() {
+    const clientes = getClientes();
+    const servicos = getServicos();
+    const contratos = getContratos();
     const totalCli = clientes.length;
     const cAtivos = contratos.filter(c => c.estado === 'Ativo');
     const ops = [...new Set(cAtivos.map(c => { const s = servicos.find(x => x.id === c.servicoId); return s ? s.operadora : null; }).filter(Boolean))];
-    const receita = cAtivos.reduce((s, c) => s + (parseFloat(c.valor) || 0), 0);
+    const receita = cAtivos.reduce(function(s, c) { return s + (parseFloat(c.valor) || 0); }, 0);
     const pendentes = contratos.filter(c => c.estado === 'Pendente').length;
 
     document.getElementById('kpiClientes').textContent = totalCli;
@@ -116,45 +114,54 @@
   }
 
   function renderGraficoOperadoras() {
+    const contratos = getContratos();
+    const servicos = getServicos();
     const el = document.getElementById('graficoOperadoras');
     const count = {};
-    contratos.filter(c => c.estado === 'Ativo').forEach(c => {
-      const s = servicos.find(x => x.id === c.servicoId);
+    contratos.filter(c => c.estado === 'Ativo').forEach(function(c) {
+      const s = servicos.find(function(x) { return x.id === c.servicoId; });
       const op = s ? s.operadora : 'Outro';
       count[op] = (count[op] || 0) + 1;
     });
-    const total = Object.values(count).reduce((a, b) => a + b, 0);
+    const total = Object.values(count).reduce(function(a, b) { return a + b; }, 0);
     if (!Object.keys(count).length) { el.innerHTML = '<p class="small" style="color:var(--slate-400)">Nenhum contrato ativo</p>'; return; }
-    el.innerHTML = Object.entries(count).map(([op, qtd]) => {
+    el.innerHTML = Object.entries(count).map(function(e) {
+      const op = e[0], qtd = e[1];
       const pct = total ? (qtd / total * 100).toFixed(0) : 0;
       return '<div class="bar-item"><span class="bar-label">' + op + '</span><div class="bar-track"><div class="bar-fill ' + op.toLowerCase() + '" style="width:' + pct + '%">' + qtd + ' (' + pct + '%)</div></div></div>';
     }).join('');
   }
 
   function renderGraficoServicos() {
+    const contratos = getContratos();
+    const servicos = getServicos();
     const el = document.getElementById('graficoServicos');
     const count = {};
-    contratos.filter(c => c.estado === 'Ativo').forEach(c => {
-      const s = servicos.find(x => x.id === c.servicoId);
+    contratos.filter(c => c.estado === 'Ativo').forEach(function(c) {
+      const s = servicos.find(function(x) { return x.id === c.servicoId; });
       const t = s ? (s.tipo || 'Outro') : 'Outro';
       count[t] = (count[t] || 0) + 1;
     });
-    const total = Object.values(count).reduce((a, b) => a + b, 0);
+    const total = Object.values(count).reduce(function(a, b) { return a + b; }, 0);
     if (!Object.keys(count).length) { el.innerHTML = '<p class="small" style="color:var(--slate-400)">Nenhum contrato ativo</p>'; return; }
-    el.innerHTML = Object.entries(count).map(([t, qtd]) => {
+    el.innerHTML = Object.entries(count).map(function(e) {
+      const t = e[0], qtd = e[1];
       const pct = total ? (qtd / total * 100).toFixed(0) : 0;
       return '<div class="bar-item"><span class="bar-label">' + t + '</span><div class="bar-track"><div class="bar-fill accent" style="width:' + pct + '%">' + qtd + ' (' + pct + '%)</div></div></div>';
     }).join('');
   }
 
   function renderUltimosClientes() {
+    const clientes = getClientes();
+    const contratos = getContratos();
+    const servicos = getServicos();
     const el = document.getElementById('tabelaUltimos');
     const ultimos = clientes.slice().reverse().slice(0, 5);
     if (!ultimos.length) { el.innerHTML = '<tr><td colspan="5" class="text-center" style="color:var(--slate-400);padding:2rem">Nenhum cliente registado</td></tr>'; return; }
-    el.innerHTML = ultimos.map(c => {
-      const ct = contratos.filter(x => x.clienteId === c.id);
-      const sNome = ct.length ? (servicos.find(x => x.id === ct[0].servicoId)?.nome || '—') : '—';
-      const valor = ct.length ? (parseFloat(ct[0].valor) || 0).toFixed(2) + '&euro;' : '—';
+    el.innerHTML = ultimos.map(function(c) {
+      const ct = contratos.filter(function(x) { return x.clienteId === c.id; });
+      const sNome = ct.length ? (servicos.find(function(x) { return x.id === ct[0].servicoId; })?.nome || '\u2014') : '\u2014';
+      const valor = ct.length ? (parseFloat(ct[0].valor) || 0).toFixed(2) + '&euro;' : '\u2014';
       const est = ct.length ? ct[0].estado : 'Sem contrato';
       return '<tr><td class="td-bold">' + esc(c.nome) + '</td><td><span class="tag-op tag-' + c.operadora.toLowerCase() + '">' + c.operadora + '</span></td><td>' + esc(sNome) + '</td><td>' + valor + '</td><td><span class="badge badge-' + est.toLowerCase() + '">' + est + '</span></td></tr>';
     }).join('');
@@ -164,13 +171,14 @@
 
   /* ===== CLIENTES ===== */
   function renderClientes() {
+    const clientes = getClientes();
     const f = (document.getElementById('filtroCli')?.value || '').toLowerCase();
     const op = document.getElementById('filtroCliOp')?.value || '';
     const est = document.getElementById('filtroCliEst')?.value || '';
     const el = document.getElementById('tabelaClientes');
     const ct = document.getElementById('totalClientesCount');
 
-    let lista = clientes.filter(c => {
+    let lista = clientes.filter(function(c) {
       if (f && !c.nome.toLowerCase().includes(f) && !(c.email||'').toLowerCase().includes(f) && !(c.nif||'').includes(f)) return false;
       if (op && c.operadora !== op) return false;
       if (est && c.estado !== est) return false;
@@ -178,21 +186,22 @@
     });
 
     if (!lista.length) { el.innerHTML = '<tr><td colspan="9" class="text-center" style="color:var(--slate-400);padding:2rem">Nenhum cliente encontrado</td></tr>'; ct.textContent = '0 clientes'; return; }
-    el.innerHTML = lista.map(c => {
-      var iban = c.iban ? esc(c.iban) : '—';
-      var cvp = c.cvp ? esc(c.cvp) : '—';
+    el.innerHTML = lista.map(function(c) {
+      var iban = c.iban ? esc(c.iban) : '\u2014';
+      var cvp = c.cvp ? esc(c.cvp) : '\u2014';
       if (iban.length > 12) iban = '...' + iban.slice(-12);
-      return '<tr><td class="td-bold">' + esc(c.nome) + '</td><td class="small">' + esc(c.email||'—') + '</td><td class="small">' + esc(c.nif||'—') + '</td><td class="small">' + esc(c.telefone||'—') + '</td><td><span class="tag-op tag-' + c.operadora.toLowerCase() + '">' + c.operadora + '</span></td><td class="small" style="font-family:monospace;font-size:0.75rem">' + iban + '</td><td class="small" style="font-family:monospace;font-size:0.75rem">' + cvp + '</td><td><span class="badge badge-' + c.estado.toLowerCase() + '">' + c.estado + '</span></td><td><button class="btn btn-sm btn-secondary" onclick="editarCliente(' + c.id + ')">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarCliente(' + c.id + ')">Eliminar</button></td></tr>';
+      return '<tr><td class="td-bold">' + esc(c.nome) + '</td><td class="small">' + esc(c.email||'\u2014') + '</td><td class="small">' + esc(c.nif||'\u2014') + '</td><td class="small">' + esc(c.telefone||'\u2014') + '</td><td><span class="tag-op tag-' + c.operadora.toLowerCase() + '">' + c.operadora + '</span></td><td class="small" style="font-family:monospace;font-size:0.75rem">' + iban + '</td><td class="small" style="font-family:monospace;font-size:0.75rem">' + cvp + '</td><td><span class="badge badge-' + c.estado.toLowerCase() + '">' + c.estado + '</span></td><td><button class="btn btn-sm btn-secondary" onclick="editarCliente(' + c.id + ')">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarCliente(' + c.id + ')">Eliminar</button></td></tr>';
     }).join('');
     ct.textContent = lista.length + ' cliente(s)';
   }
   window.renderClientes = renderClientes;
 
   window.abrirFormCliente = function(id) {
+    const clientes = getClientes();
     document.getElementById('modalClienteTitulo').textContent = id ? 'Editar Cliente' : 'Novo Cliente';
     document.getElementById('cliId').value = id || '';
     if (id) {
-      const c = clientes.find(x => x.id === id); if (!c) return;
+      const c = clientes.find(function(x) { return x.id === id; }); if (!c) return;
       document.getElementById('cliNome').value = c.nome || '';
       document.getElementById('cliEmail').value = c.email || '';
       document.getElementById('cliTel').value = c.telefone || '';
@@ -205,7 +214,7 @@
       document.getElementById('cliEst').value = c.estado || 'Ativo';
       document.getElementById('cliNotas').value = c.notas || '';
     } else {
-      ['cliNome','cliEmail','cliTel','cliNif','cliIban','cliCvp','cliMorada','cliCp','cliNotas'].forEach(x => document.getElementById(x).value = '');
+      ['cliNome','cliEmail','cliTel','cliNif','cliIban','cliCvp','cliMorada','cliCp','cliNotas'].forEach(function(x) { document.getElementById(x).value = ''; });
       document.getElementById('cliOp').value = '';
       document.getElementById('cliEst').value = 'Ativo';
     }
@@ -230,9 +239,10 @@
       notas: document.getElementById('cliNotas').value.trim(),
     };
     if (!d.nome || !d.operadora) { toast('Nome e operadora s\u00e3o obrigat\u00f3rios.', 'error'); return; }
-    if (id) { const i = clientes.findIndex(c => c.id === parseInt(id)); if (i>=0) clientes[i] = { ...clientes[i], ...d }; }
+    let clientes = getClientes();
+    if (id) { const i = clientes.findIndex(function(c) { return c.id === parseInt(id); }); if (i>=0) clientes[i] = { ...clientes[i], ...d }; }
     else { d.id = newId(clientes); clientes.push(d); }
-    saveClientes();
+    saveClientes(clientes);
     closeModal('modalCliente');
     renderClientes(); renderDashboard();
     toast(id ? 'Cliente actualizado' : 'Cliente criado', 'success');
@@ -240,34 +250,37 @@
 
   window.eliminarCliente = function(id) {
     if (!confirm('Eliminar este cliente?')) return;
-    clientes = clientes.filter(c => c.id !== id);
-    saveClientes();
+    let clientes = getClientes();
+    clientes = clientes.filter(function(c) { return c.id !== id; });
+    saveClientes(clientes);
     renderClientes(); renderDashboard();
     toast('Cliente eliminado', 'info');
   };
 
-  /* ===== SERVIÇOS ===== */
+  /* ===== SERVI\u00c7OS ===== */
   function renderServicos() {
+    const servicos = getServicos();
     const op = document.getElementById('filtroServOp')?.value || '';
     const tp = document.getElementById('filtroServTp')?.value || '';
     const el = document.getElementById('gradeServicos');
-    let lista = servicos.filter(s => {
+    let lista = servicos.filter(function(s) {
       if (op && s.operadora !== op) return false;
       if (tp && s.tipo !== tp) return false;
       return true;
     });
     if (!lista.length) { el.innerHTML = '<p style="color:var(--slate-400);text-align:center;padding:2rem;grid-column:1/-1">Nenhum servi\u00e7o encontrado</p>'; return; }
-    el.innerHTML = lista.map(s => {
-      return '<div class="servico-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><span class="tag-op tag-' + s.operadora.toLowerCase() + '">' + s.operadora + '</span> <h4 style="display:inline;margin-left:0.25rem">' + esc(s.nome) + '</h4></div><div class="preco">' + parseFloat(s.preco).toFixed(2) + '&euro;</div></div><div class="detalhe"><i class="bi bi-tag-fill"></i> ' + (s.tipo||'—') + '</div>' + (s.velocidade ? '<div class="detalhe"><i class="bi bi-speedometer2"></i> ' + esc(s.velocidade) + '</div>' : '') + (s.canais ? '<div class="detalhe"><i class="bi bi-tv"></i> ' + esc(s.canais) + ' canais</div>' : '') + (s.moveis ? '<div class="detalhe"><i class="bi bi-phone"></i> ' + esc(s.moveis) + '</div>' : '') + (s.descricao ? '<div class="detalhe" style="margin-top:0.25rem">' + esc(s.descricao) + '</div>' : '') + '<div class="acoes"><button class="btn btn-sm btn-secondary" onclick="editarServico(' + s.id + ')">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarServico(' + s.id + ')">Eliminar</button></div></div>';
+    el.innerHTML = lista.map(function(s) {
+      return '<div class="servico-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><span class="tag-op tag-' + s.operadora.toLowerCase() + '">' + s.operadora + '</span> <h4 style="display:inline;margin-left:0.25rem">' + esc(s.nome) + '</h4></div><div class="preco">' + parseFloat(s.preco).toFixed(2) + '&euro;</div></div><div class="detalhe"><i class="bi bi-tag-fill"></i> ' + (s.tipo||'\u2014') + '</div>' + (s.velocidade ? '<div class="detalhe"><i class="bi bi-speedometer2"></i> ' + esc(s.velocidade) + '</div>' : '') + (s.canais ? '<div class="detalhe"><i class="bi bi-tv"></i> ' + esc(s.canais) + ' canais</div>' : '') + (s.moveis ? '<div class="detalhe"><i class="bi bi-phone"></i> ' + esc(s.moveis) + '</div>' : '') + (s.descricao ? '<div class="detalhe" style="margin-top:0.25rem">' + esc(s.descricao) + '</div>' : '') + '<div class="acoes"><button class="btn btn-sm btn-secondary" onclick="editarServico(' + s.id + ')">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarServico(' + s.id + ')">Eliminar</button></div></div>';
     }).join('');
   }
   window.renderServicos = renderServicos;
 
   window.abrirFormServico = function(id) {
+    const servicos = getServicos();
     document.getElementById('modalServicoTitulo').textContent = id ? 'Editar Servi\u00e7o' : 'Novo Servi\u00e7o';
     document.getElementById('servId').value = id || '';
     if (id) {
-      const s = servicos.find(x => x.id === id); if (!s) return;
+      const s = servicos.find(function(x) { return x.id === id; }); if (!s) return;
       document.getElementById('servNome').value = s.nome || '';
       document.getElementById('servOp').value = s.operadora || '';
       document.getElementById('servTipo').value = s.tipo || '';
@@ -277,7 +290,7 @@
       document.getElementById('servMoveis').value = s.moveis || '';
       document.getElementById('servDesc').value = s.descricao || '';
     } else {
-      ['servNome','servVel','servPreco','servCanais','servMoveis','servDesc'].forEach(x => document.getElementById(x).value = '');
+      ['servNome','servVel','servPreco','servCanais','servMoveis','servDesc'].forEach(function(x) { document.getElementById(x).value = ''; });
       document.getElementById('servOp').value = '';
       document.getElementById('servTipo').value = '';
     }
@@ -299,9 +312,10 @@
       descricao: document.getElementById('servDesc').value.trim(),
     };
     if (!d.nome || !d.operadora || !d.tipo) { toast('Nome, operadora e tipo s\u00e3o obrigat\u00f3rios.', 'error'); return; }
-    if (id) { const i = servicos.findIndex(s => s.id === parseInt(id)); if (i>=0) servicos[i] = { ...servicos[i], ...d }; }
+    let servicos = getServicos();
+    if (id) { const i = servicos.findIndex(function(s) { return s.id === parseInt(id); }); if (i>=0) servicos[i] = { ...servicos[i], ...d }; }
     else { d.id = newId(servicos); servicos.push(d); }
-    saveServicos();
+    saveServicos(servicos);
     closeModal('modalServico');
     renderServicos(); renderDashboard();
     toast(id ? 'Servi\u00e7o actualizado' : 'Servi\u00e7o criado', 'success');
@@ -309,30 +323,35 @@
 
   window.eliminarServico = function(id) {
     if (!confirm('Eliminar este servi\u00e7o?')) return;
-    servicos = servicos.filter(s => s.id !== id);
-    saveServicos();
+    let servicos = getServicos();
+    servicos = servicos.filter(function(s) { return s.id !== id; });
+    saveServicos(servicos);
     renderServicos(); renderDashboard();
     toast('Servi\u00e7o eliminado', 'info');
   };
 
   /* ===== CONTRATOS + EMAIL APPROVAL ===== */
   function renderContratos() {
+    const clientes = getClientes();
+    const servicos = getServicos();
+    const contratos = getContratos();
+    const aprovacoes = getAprovacoes();
     const f = (document.getElementById('filtroContr')?.value || '').toLowerCase();
     const est = document.getElementById('filtroContrEst')?.value || '';
     const el = document.getElementById('tabelaContratos');
-    let lista = contratos.filter(c => {
+    let lista = contratos.filter(function(c) {
       if (est && c.estado !== est) return false;
-      if (f) { const cl = clientes.find(x => x.id === c.clienteId); if (!cl || !cl.nome.toLowerCase().includes(f)) return false; }
+      if (f) { const cl = clientes.find(function(x) { return x.id === c.clienteId; }); if (!cl || !cl.nome.toLowerCase().includes(f)) return false; }
       return true;
     });
     if (!lista.length) { el.innerHTML = '<tr><td colspan="8" class="text-center" style="color:var(--slate-400);padding:2rem">Nenhum contrato encontrado</td></tr>'; return; }
-    el.innerHTML = lista.map(c => {
-      const cl = clientes.find(x => x.id === c.clienteId);
-      const s = servicos.find(x => x.id === c.servicoId);
-      const nm = cl ? esc(cl.nome) : '—';
-      const sn = s ? esc(s.nome) : '—';
-      const op = s ? s.operadora : '—';
-      const aprov = aprovacoes.find(a => a.contratoId === c.id);
+    el.innerHTML = lista.map(function(c) {
+      const cl = clientes.find(function(x) { return x.id === c.clienteId; });
+      const s = servicos.find(function(x) { return x.id === c.servicoId; });
+      const nm = cl ? esc(cl.nome) : '\u2014';
+      const sn = s ? esc(s.nome) : '\u2014';
+      const op = s ? s.operadora : '\u2014';
+      const aprov = aprovacoes.find(function(a) { return a.contratoId === c.id; });
       let acoes = '<button class="btn btn-sm btn-secondary" onclick="editarContrato(' + c.id + ')">Editar</button> <button class="btn btn-sm btn-danger" onclick="eliminarContrato(' + c.id + ')">Eliminar</button>';
       if (c.estado === 'Pendente' && !aprov) {
         acoes += ' <button class="btn btn-sm btn-primary" onclick="enviarAprovacao(' + c.id + ')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Enviar</button>';
@@ -348,21 +367,25 @@
   window.renderContratos = renderContratos;
 
   window.enviarAprovacao = function(contratoId) {
-    const c = contratos.find(x => x.id === contratoId);
+    const clientes = getClientes();
+    const servicos = getServicos();
+    const contratos = getContratos();
+    const c = contratos.find(function(x) { return x.id === contratoId; });
     if (!c) return;
-    const cl = clientes.find(x => x.id === c.clienteId);
-    const s = servicos.find(x => x.id === c.servicoId);
+    const cl = clientes.find(function(x) { return x.id === c.clienteId; });
+    const s = servicos.find(function(x) { return x.id === c.servicoId; });
     if (!cl || !s) { toast('Cliente ou servi\u00e7o n\u00e3o encontrado', 'error'); return; }
 
     const token = 'aprov_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
     const link = window.location.origin + '/gestao/aprovacao.html?token=' + token;
 
+    let aprovacoes = getAprovacoes();
     aprovacoes.push({ token: token, contratoId: c.id, status: 'pendente', dataEnvio: today(), clienteNome: cl.nome, servicoNome: s.nome, operadora: s.operadora, valor: c.valor });
-    saveAprovacoes();
+    saveAprovacoes(aprovacoes);
 
     const preview = document.getElementById('emailPreview');
     document.getElementById('emailPreviewCliente').textContent = cl.nome;
-    document.getElementById('emailPreviewEmail').textContent = cl.email || '—';
+    document.getElementById('emailPreviewEmail').textContent = cl.email || '\u2014';
     document.getElementById('emailPreviewLink').textContent = link;
     document.getElementById('emailPreviewLink').href = link;
     preview.classList.remove('hidden');
@@ -376,18 +399,21 @@
   };
 
   function popularSelectContrato() {
+    const clientes = getClientes();
+    const servicos = getServicos();
     const selCli = document.getElementById('contrCli');
     const selServ = document.getElementById('contrServ');
-    selCli.innerHTML = '<option value="">Selecionar cliente</option>' + clientes.map(c => '<option value="' + c.id + '">' + esc(c.nome) + ' (' + c.operadora + ')</option>').join('');
-    selServ.innerHTML = '<option value="">Selecionar servi\u00e7o</option>' + servicos.map(s => '<option value="' + s.id + '">' + esc(s.nome) + ' — ' + s.operadora + ' (' + parseFloat(s.preco).toFixed(2) + '&euro;)</option>').join('');
+    selCli.innerHTML = '<option value="">Selecionar cliente</option>' + clientes.map(function(c) { return '<option value="' + c.id + '">' + esc(c.nome) + ' (' + c.operadora + ')</option>'; }).join('');
+    selServ.innerHTML = '<option value="">Selecionar servi\u00e7o</option>' + servicos.map(function(s) { return '<option value="' + s.id + '">' + esc(s.nome) + ' \u2014 ' + s.operadora + ' (' + parseFloat(s.preco).toFixed(2) + '&euro;)</option>'; }).join('');
   }
 
   window.abrirFormContrato = function(id) {
+    const contratos = getContratos();
     popularSelectContrato();
     document.getElementById('modalContratoTitulo').textContent = id ? 'Editar Contrato' : 'Novo Contrato';
     document.getElementById('contrId').value = id || '';
     if (id) {
-      const c = contratos.find(x => x.id === id); if (!c) return;
+      const c = contratos.find(function(x) { return x.id === id; }); if (!c) return;
       document.getElementById('contrCli').value = c.clienteId || '';
       document.getElementById('contrServ').value = c.servicoId || '';
       document.getElementById('contrInicio').value = c.dataInicio || '';
@@ -418,9 +444,10 @@
       estado: document.getElementById('contrEst').value,
     };
     if (!d.clienteId || !d.servicoId) { toast('Seleciona um cliente e um servi\u00e7o.', 'error'); return; }
-    if (id) { const i = contratos.findIndex(c => c.id === parseInt(id)); if (i>=0) contratos[i] = { ...contratos[i], ...d }; }
+    let contratos = getContratos();
+    if (id) { const i = contratos.findIndex(function(c) { return c.id === parseInt(id); }); if (i>=0) contratos[i] = { ...contratos[i], ...d }; }
     else { d.id = newId(contratos); contratos.push(d); }
-    saveContratos();
+    saveContratos(contratos);
     closeModal('modalContrato');
     renderContratos(); renderDashboard();
     toast(id ? 'Contrato actualizado' : 'Contrato criado', 'success');
@@ -428,38 +455,45 @@
 
   window.eliminarContrato = function(id) {
     if (!confirm('Eliminar este contrato?')) return;
-    contratos = contratos.filter(c => c.id !== id);
-    aprovacoes = aprovacoes.filter(a => a.contratoId !== id);
-    saveContratos(); saveAprovacoes();
+    let contratos = getContratos();
+    contratos = contratos.filter(function(c) { return c.id !== id; });
+    saveContratos(contratos);
+    let aprovacoes = getAprovacoes();
+    aprovacoes = aprovacoes.filter(function(a) { return a.contratoId !== id; });
+    saveAprovacoes(aprovacoes);
     renderContratos(); renderDashboard();
     toast('Contrato eliminado', 'info');
   };
 
-  /* ===== RELATÓRIOS ===== */
+  /* ===== RELAT\u00d3RIOS ===== */
   function renderRelatorios() {
+    const clientes = getClientes();
+    const servicos = getServicos();
+    const contratos = getContratos();
     const topEl = document.getElementById('topClientes');
     const recEl = document.getElementById('receitaOperadora');
 
     const gastos = {};
-    contratos.filter(c => c.estado === 'Ativo').forEach(c => {
-      const cl = clientes.find(x => x.id === c.clienteId);
+    contratos.filter(function(c) { return c.estado === 'Ativo'; }).forEach(function(c) {
+      const cl = clientes.find(function(x) { return x.id === c.clienteId; });
       if (cl) {
         gastos[cl.id] = gastos[cl.id] || { nome: cl.nome, total: 0, contratos: 0 };
         gastos[cl.id].total += parseFloat(c.valor) || 0;
         gastos[cl.id].contratos++;
       }
     });
-    const rank = Object.values(gastos).sort((a, b) => b.total - a.total).slice(0, 5);
-    topEl.innerHTML = rank.length ? rank.map((r, i) => '<div class="ranking-item"><div class="ranking-pos">' + (i+1) + '</div><div class="ranking-info"><div class="ranking-nome">' + esc(r.nome) + '</div><div class="ranking-sub">' + r.contratos + ' contrato(s)</div></div><div class="ranking-valor">' + r.total.toFixed(2) + '&euro;</div></div>').join('') : '<p class="small" style="color:var(--slate-400)">Nenhum contrato ativo</p>';
+    const rank = Object.values(gastos).sort(function(a, b) { return b.total - a.total; }).slice(0, 5);
+    topEl.innerHTML = rank.length ? rank.map(function(r, i) { return '<div class="ranking-item"><div class="ranking-pos">' + (i+1) + '</div><div class="ranking-info"><div class="ranking-nome">' + esc(r.nome) + '</div><div class="ranking-sub">' + r.contratos + ' contrato(s)</div></div><div class="ranking-valor">' + r.total.toFixed(2) + '&euro;</div></div>'; }).join('') : '<p class="small" style="color:var(--slate-400)">Nenhum contrato ativo</p>';
 
     const recOp = {};
-    contratos.filter(c => c.estado === 'Ativo').forEach(c => {
-      const s = servicos.find(x => x.id === c.servicoId);
+    contratos.filter(function(c) { return c.estado === 'Ativo'; }).forEach(function(c) {
+      const s = servicos.find(function(x) { return x.id === c.servicoId; });
       const op = s ? s.operadora : 'Outro';
       recOp[op] = (recOp[op] || 0) + (parseFloat(c.valor) || 0);
     });
-    const totalRec = Object.values(recOp).reduce((a, b) => a + b, 0);
-    recEl.innerHTML = Object.keys(recOp).length ? Object.entries(recOp).map(([op, val]) => {
+    const totalRec = Object.values(recOp).reduce(function(a, b) { return a + b; }, 0);
+    recEl.innerHTML = Object.keys(recOp).length ? Object.entries(recOp).map(function(e) {
+      const op = e[0], val = e[1];
       const pct = totalRec ? (val / totalRec * 100).toFixed(0) : 0;
       return '<div class="bar-item"><span class="bar-label">' + op + '</span><div class="bar-track"><div class="bar-fill ' + op.toLowerCase() + '" style="width:' + pct + '%">' + val.toFixed(2) + '&euro; (' + pct + '%)</div></div></div>';
     }).join('') : '<p class="small" style="color:var(--slate-400)">Nenhuma receita</p>';
@@ -470,23 +504,25 @@
   window.exportarCSV = function(tipo) {
     let data, headers, filename;
     if (tipo === 'clientes') {
-      data = clientes;
+      data = getClientes();
       headers = ['ID','Nome','Email','Telefone','NIF','Operadora','Morada','CodPostal','Estado','Notas'];
       filename = 'clientes_gcc.csv';
     } else if (tipo === 'servicos') {
-      data = servicos;
+      data = getServicos();
       headers = ['ID','Nome','Operadora','Tipo','Velocidade','Preco','Canais','Moveis','Descricao'];
       filename = 'servicos_gcc.csv';
     } else {
-      data = contratos.map(c => {
-        const cl = clientes.find(x => x.id === c.clienteId);
-        const s = servicos.find(x => x.id === c.servicoId);
-        return { id: c.id, cliente: cl ? cl.nome : '—', servico: s ? s.nome : '—', dataInicio: c.dataInicio, dataFim: c.dataFim, valor: c.valor, estado: c.estado };
+      const clientes = getClientes();
+      const servicos = getServicos();
+      data = getContratos().map(function(c) {
+        const cl = clientes.find(function(x) { return x.id === c.clienteId; });
+        const s = servicos.find(function(x) { return x.id === c.servicoId; });
+        return { id: c.id, cliente: cl ? cl.nome : '\u2014', servico: s ? s.nome : '\u2014', dataInicio: c.dataInicio, dataFim: c.dataFim, valor: c.valor, estado: c.estado };
       });
       headers = ['ID','Cliente','Servico','DataInicio','DataFim','Valor','Estado'];
       filename = 'contratos_gcc.csv';
     }
-    const csv = [headers.join(';'), ...data.map(r => headers.map(h => { const v = r[h.toLowerCase()] !== undefined ? r[h.toLowerCase()] : (r[h] !== undefined ? r[h] : ''); return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';'))].join('\n');
+    const csv = [headers.join(';'), ...data.map(function(r) { return headers.map(function(h) { const v = r[h.toLowerCase()] !== undefined ? r[h.toLowerCase()] : (r[h] !== undefined ? r[h] : ''); return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';'); })].join('\n');
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -521,14 +557,14 @@
 
     el.innerHTML = lista.map(function(l) {
       var rowClass = !l.lido ? ' class="lead-nao-lido"' : '';
-      var dataStr = l.data ? new Date(l.data + 'T12:00:00').toLocaleDateString('pt-PT') : '—';
-      var opTag = l.operadora && l.operadora !== 'Não especificada' && l.operadora !== '—'
+      var dataStr = l.data ? new Date(l.data + 'T12:00:00').toLocaleDateString('pt-PT') : '\u2014';
+      var opTag = l.operadora && l.operadora !== 'N\u00e3o especificada' && l.operadora !== '\u2014'
         ? '<span class="tag-op tag-' + l.operadora.toLowerCase() + '">' + esc(l.operadora) + '</span>'
-        : '<span style="color:var(--slate-400)">—</span>';
+        : '<span style="color:var(--slate-400)">\u2014</span>';
       var lidoHtml = l.lido
         ? '<span style="color:var(--slate-400);font-size:0.75rem">Lido</span>'
         : '<button class="btn btn-sm btn-primary lead-btn-lido" onclick="marcarLeadLido(' + l.id + ')">Marcar lido</button>';
-      return '<tr' + rowClass + '><td class="small">' + dataStr + '</td><td class="td-bold">' + esc(l.nome) + '</td><td class="small">' + esc(l.email) + '</td><td class="small">' + esc(l.telefone) + '</td><td>' + opTag + '</td><td class="small" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(l.mensagem || '—') + '</td><td>' + lidoHtml + '</td><td><button class="btn btn-sm btn-secondary" onclick="adicionarLeadCliente(' + l.id + ')" title="Adicionar como cliente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Cliente</button></td></tr>';
+      return '<tr' + rowClass + '><td class="small">' + dataStr + '</td><td class="td-bold">' + esc(l.nome) + '</td><td class="small">' + esc(l.email) + '</td><td class="small">' + esc(l.telefone) + '</td><td>' + opTag + '</td><td class="small" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(l.mensagem || '\u2014') + '</td><td>' + lidoHtml + '</td><td><button class="btn btn-sm btn-secondary" onclick="adicionarLeadCliente(' + l.id + ')" title="Adicionar como cliente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:2px"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Cliente</button></td></tr>';
     }).join('');
     ct.textContent = lista.length + ' lead(s)';
 
@@ -549,21 +585,22 @@
     var leads = getLeads();
     var lead = leads.find(function(l) { return l.id === id; });
     if (!lead) return;
+    let clientes = getClientes();
     var dados = {
       id: newId(clientes),
       nome: lead.nome,
       email: lead.email || '',
       telefone: lead.telefone || '',
       nif: '',
-      operadora: (lead.operadora && lead.operadora !== 'Não especificada') ? lead.operadora : '',
+      operadora: (lead.operadora && lead.operadora !== 'N\u00e3o especificada') ? lead.operadora : '',
       morada: '',
       codPostal: '',
       estado: 'Ativo',
-      notas: 'Lead do site. Msg: ' + (lead.mensagem || '—'),
+      notas: 'Lead do site. Msg: ' + (lead.mensagem || '\u2014'),
     };
     if (!dados.operadora) dados.operadora = 'NOS';
     clientes.push(dados);
-    saveClientes();
+    saveClientes(clientes);
     marcarLeadLido(id);
     toast('Lead adicionado como cliente: ' + dados.nome, 'success');
     renderClientes();
@@ -593,7 +630,7 @@
   window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
   window.fecharModal = function(e) { if (e.target === e.currentTarget) e.target.classList.remove('open'); };
 
-  document.querySelectorAll('.modal-overlay').forEach(el => {
+  document.querySelectorAll('.modal-overlay').forEach(function(el) {
     el.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
   });
 
@@ -620,17 +657,19 @@
 
   /* ===== SEED DATA ===== */
   function seedData() {
+    let servicos = getServicos();
     if (!servicos.length) {
       servicos.push(
-        { id: 1, nome: '3P 200Mbps', operadora: 'NOS', tipo: '3P', velocidade: '200Mbps', preco: 29.99, canais: '140', moveis: '—', descricao: 'TV + Internet + Voz fixa' },
+        { id: 1, nome: '3P 200Mbps', operadora: 'NOS', tipo: '3P', velocidade: '200Mbps', preco: 29.99, canais: '140', moveis: '\u2014', descricao: 'TV + Internet + Voz fixa' },
         { id: 2, nome: '4P 1Gbps', operadora: 'NOS', tipo: '4P', velocidade: '1Gbps', preco: 56.99, canais: '180', moveis: '2xIlimitados', descricao: 'TV + Internet + Voz + 2 Telem\u00f3veis ilimitados' },
         { id: 3, nome: '4P 500Mbps', operadora: 'MEO', tipo: '4P', velocidade: '500Mbps', preco: 49.99, canais: '160', moveis: '2x20GB', descricao: 'TV + Internet + Voz + 2 Telem\u00f3veis' },
         { id: 4, nome: 'Fibra 1Gbps', operadora: 'Vodafone', tipo: '4P', velocidade: '1Gbps', preco: 52.99, canais: '170', moveis: '2x30GB', descricao: 'TV + Internet + Voz Fibra + 2 Telem\u00f3veis' },
-        { id: 5, nome: '3P 100Mbps', operadora: 'MEO', tipo: '3P', velocidade: '100Mbps', preco: 24.99, canais: '120', moveis: '—', descricao: 'TV + Internet + Voz fixa' },
+        { id: 5, nome: '3P 100Mbps', operadora: 'MEO', tipo: '3P', velocidade: '100Mbps', preco: 24.99, canais: '120', moveis: '\u2014', descricao: 'TV + Internet + Voz fixa' },
         { id: 6, nome: '4P 200Mbps', operadora: 'Vodafone', tipo: '4P', velocidade: '200Mbps', preco: 38.99, canais: '150', moveis: '2x15GB', descricao: 'TV + Internet + Voz + 2 Telem\u00f3veis' },
       );
-      saveServicos();
+      saveServicos(servicos);
     }
+    let clientes = getClientes();
     if (!clientes.length) {
       clientes.push(
         { id: 1, nome: 'Ana Silva', email: 'ana.silva@email.com', telefone: '912345678', nif: '123456789', operadora: 'NOS', morada: 'Rua das Flores, 12', codPostal: '1000-001', estado: 'Ativo', notas: 'Cliente satisfeita' },
@@ -640,8 +679,9 @@
         { id: 5, nome: 'Sofia Martins', email: 'sofia.martins@email.com', telefone: '956789012', nif: '567890123', operadora: 'NOS', morada: 'Travessa do Sol, 5', codPostal: '1300-001', estado: 'Ativo', notas: 'Cliente TV Cines' },
         { id: 6, nome: 'Rui Santos', email: 'rui.santos@email.com', telefone: '967890123', nif: '678901234', operadora: 'Vodafone', morada: 'Rua Nova, 10', codPostal: '1400-001', estado: 'Ativo', notas: '' },
       );
-      saveClientes();
+      saveClientes(clientes);
     }
+    let contratos = getContratos();
     if (!contratos.length) {
       contratos.push(
         { id: 1, clienteId: 1, servicoId: 2, dataInicio: '2025-01-15', dataFim: '2027-01-15', valor: 56.99, estado: 'Ativo' },
@@ -651,7 +691,7 @@
         { id: 5, clienteId: 5, servicoId: 1, dataInicio: '2025-11-01', dataFim: '2027-11-01', valor: 29.99, estado: 'Ativo' },
         { id: 6, clienteId: 6, servicoId: 6, dataInicio: '2026-04-01', dataFim: '2028-04-01', valor: 38.99, estado: 'Pendente' },
       );
-      saveContratos();
+      saveContratos(contratos);
     }
   }
 
