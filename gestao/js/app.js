@@ -88,7 +88,7 @@
             var items = res.documents.map(function(d) {
               var item = { _appwriteId: d.$id };
               for (var k in d) {
-                if (!k.startsWith('$')) item[k] = d[k];
+                if (!k.startsWith('$') && k !== 'token' && k !== 'leads') item[k] = d[k];
               }
               if (item.id === undefined || item.id === null) {
                 maxId++;
