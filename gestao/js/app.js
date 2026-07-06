@@ -488,6 +488,7 @@
             toast('Email enviado para ' + cl.nome, 'success');
         } catch (error) {
             console.error('Erro email:', error);
+            toast('Erro ao enviar email: ' + (error.text || error.message || 'desconhecido'), 'error');
             var preview = document.getElementById('emailPreview');
             document.getElementById('emailPreviewCliente').textContent = cl.nome;
             document.getElementById('emailPreviewEmail').textContent = cl.email || '\u2014';
@@ -495,7 +496,6 @@
             document.getElementById('emailPreviewLink').href = link;
             preview.classList.remove('hidden');
             preview.style.display = 'flex';
-            toast('Mostrando link manual (email n\u00e3o configurado)', 'info');
         }
 
         renderContratos();
