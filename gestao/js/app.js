@@ -92,8 +92,12 @@
             });
             var merged = items.slice();
             local.forEach(function(l) {
-              var existe = merged.some(function(m) { return m._appwriteId && l._appwriteId ? m._appwriteId === l._appwriteId : m.id === l.id; });
-              if (!existe) merged.push(l);
+              var localMatch = merged.find(function(m) { return m._appwriteId && l._appwriteId && m._appwriteId === l._appwriteId; });
+              if (localMatch) {
+                localMatch.id = l.id;
+              } else {
+                merged.push(l);
+              }
             });
             localStorage.setItem(keys[nome], JSON.stringify(merged));
           }
@@ -469,7 +473,7 @@
         const link = window.location.origin + '/gestao/aprovacao.html?token=' + token;
 
         var aprovacoes = getAprovacoes();
-        aprovacoes.push({ token: token, contratoId: c.id, status: 'pendente', dataEnvio: today(), clienteNome: cl.nome, servicoNome: s.nome, operadora: s.operadora, valor: c.valor });
+        aprovacoes.push({ token: token, contratoId: c.id, status: 'pendente', dataEnvio: today(), clienteNome: cl.nome, servicoNome: s.nome, operadora: s.operadora, valor: c.valor, leads: '' });
         saveAprovacoes(aprovacoes);
 
         try {
@@ -550,6 +554,7 @@
             dataFim: document.getElementById('contrFim').value,
             valor: parseFloat(document.getElementById('contrValor').value) || 0,
             estado: document.getElementById('contrEst').value,
+            token: '',
         };
         if (!d.clienteId || !d.servicoId) { toast('Seleciona um cliente e um servi\u00e7o.', 'error'); return; }
         let contratos = getContratos();

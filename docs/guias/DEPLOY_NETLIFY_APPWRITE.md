@@ -16,7 +16,7 @@
 9. [Manutenção e próximos passos](#9-manutenção)
 
 ---
-
+ 
 ## 1. O que é cada serviço
 
 ### Netlify
@@ -280,10 +280,10 @@ Para ligar o frontend ao Appwrite, precisas de 3 informações:
 ```
 1. No painel do Appwrite, vai a "Settings"
 2. Anota:
-   - Project ID:  (ex: 64a1b2c3d4e5f6)
-   - API Endpoint:  (ex: https://cloud.appwrite.io/v1)
+   - Project ID: - 6a4a96ae00150f4aa36a
+   - API Endpoint:  https://fra.cloud.appwrite.io/v1
 3. Vai a "Databases" → clica na base de dados "gcc_db"
-4. Anota o Database ID:  (ex: 64f1a2b3c4d5e6)
+4. Anota o Database ID: - 6a4a97150006afe07f8a
 5. Anota o ID de cada coleção (clica em cada uma e vê o ID)
 ```
 
@@ -336,10 +336,10 @@ EmailJS precisa de um "serviço" (que é a conta de email que vai enviar).
 2. Clica "Add New Service"
 3. Escolhe Gmail (ou Outlook, ou outro)
 4. Segue as instruções para autorizar o EmailJS a enviar emails pela tua conta
-5. Anota o Service ID (ex: service_abc123)
+5. Anota o Service ID (ex: service_abc123) - service_mail_gcc
 ```
 
-**Dica:** Cria um email específico para o GCC (ex: `gcc@seudominio.pt` ou `gcc.app@gmail.com`). Não uses o teu email pessoal.
+**Dica:** Cria um email específico para o GCC (ex: `gcc@seudominio.pt` ou `gcc.app@gmail.com`). Não uses o teu email pessoal. gestorApp#26(senha gmail - )
 
 ### 4.3 Criar um template de email
 ```
@@ -383,12 +383,12 @@ EmailJS precisa de um "serviço" (que é a conta de email que vai enviar).
 </div>
 ```
 
-5. Anota o **Template ID** (ex: `template_xyz789`)
+5. Anota o **Template ID** (ex: `template_xyz789`) -> template_yodp801
 
 ### 4.4 Obter a chave de API (Public Key)
 ```
-1. Vai a "Account" → "API Keys"
-2. Anota a "Public Key" (ex: abc123def456_public)
+1. Vai a "Account" → "API Keys" 
+2. Anota a "Public Key" (ex: abc123def456_public) -> JtK8dORbF0QLA_MMa
 ```
 
 ---
