@@ -73,14 +73,21 @@
         try {
           var res = await database.listDocuments(APPWRITE_DATABASE, nome);
           if (res.documents && res.documents.length) {
+            var maxId = 0;
+            var local = JSON.parse(localStorage.getItem(keys[nome]) || '[]');
+            local.forEach(function(x) { if (x.id > maxId) maxId = x.id; });
             var items = res.documents.map(function(d) {
               var item = { _appwriteId: d.$id };
               for (var k in d) {
                 if (!k.startsWith('$')) item[k] = d[k];
               }
+              if (item.id === undefined || item.id === null) {
+                maxId++;
+                item.id = maxId;
+              }
+              if (item.id > maxId) maxId = item.id;
               return item;
             });
-            var local = JSON.parse(localStorage.getItem(keys[nome]) || '[]');
             var merged = items.slice();
             local.forEach(function(l) {
               var existe = merged.some(function(m) { return m._appwriteId && l._appwriteId ? m._appwriteId === l._appwriteId : m.id === l.id; });
@@ -686,8 +693,11 @@
     };
 
     window.adicionarLeadCliente = function(id) {
+        console.log('adicionarLeadCliente called with id:', id, 'type:', typeof id);
         var leads = getLeads();
+        console.log('leads:', leads.map(function(l) { return { id: l.id, nome: l.nome, _appwriteId: l._appwriteId }; }));
         var lead = leads.find(function(l) { return l.id === id; });
+        console.log('lead found:', lead ? lead.nome : 'NOT FOUND');
         if (!lead) return;
         let clientes = getClientes();
         var dados = {
