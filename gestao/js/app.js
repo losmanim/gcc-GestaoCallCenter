@@ -1,8 +1,8 @@
-(function() {
+(async function() {
     'use strict';
 
     if (!window.Auth) return;
-    if (!Auth.requireAuth()) return;
+    if (!(await Auth.requireAuth())) return;
 
     const STORAGE_CLIENTES = 'gcc_g_clientes';
     const STORAGE_SERVICOS = 'gcc_g_servicos';
@@ -53,7 +53,7 @@
         }
     }
 
-    const user = Auth.getUser();
+    const user = await Auth.getUser();
 
     /* ===== SIDEBAR ===== */
     function initSidebar() {
@@ -77,8 +77,8 @@
                 if (window.innerWidth < 768) document.querySelector('.sidebar-nav').scrollIntoView({ behavior: 'smooth' });
             });
         });
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            Auth.logout();
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            await Auth.logout();
             window.location.href = 'index.html';
         });
     }
@@ -699,7 +699,7 @@
         if (!atual || !nova || !confirmar) { toast('Preenche todos os campos.', 'error'); return; }
         if (nova.length < 5) { toast('A nova senha deve ter pelo menos 5 caracteres.', 'error'); return; }
         if (nova !== confirmar) { toast('As senhas n\u00e3o coincidem.', 'error'); return; }
-        const result = Auth.changePassword(user.email, atual, nova);
+        const result = await Auth.changePassword(user.email, atual, nova);
         if (!result.success) { toast(result.error, 'error'); return; }
         closeModal('modalAlterarSenha');
         toast('Senha alterada com sucesso!', 'success');
