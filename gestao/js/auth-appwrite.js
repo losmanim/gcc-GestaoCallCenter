@@ -43,7 +43,7 @@ window.Auth = {
 
   changePassword: async function(email, oldPassword, newPassword) {
     try {
-      await account.updatePassword(newPassword);
+      await account.updatePassword(newPassword, oldPassword);
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
