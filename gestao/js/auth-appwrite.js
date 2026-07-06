@@ -7,7 +7,8 @@ window.Auth = {
       var user = await account.get();
       return { success: true, user: { email: user.email, nome: user.name, tipo: 'gestor' } };
     } catch (error) {
-      return { success: false, error: 'Email ou senha inv\u00e1lidos.' };
+      console.error('Auth login error:', error);
+      return { success: false, error: error.message || 'Email ou senha inv\u00e1lidos.' };
     }
   },
 
