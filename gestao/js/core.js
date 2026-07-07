@@ -77,11 +77,12 @@
       keys['leads'] = LEADS_KEY;
       for (var n = 0; n < colecoes.length; n++) {
         var nome = colecoes[n];
+        var local = JSON.parse(localStorage.getItem(keys[nome]) || '[]');
+        if (local.length > 0) continue;
         try {
           var res = await database.listDocuments(APPWRITE_DATABASE, nome);
           if (res.documents && res.documents.length) {
             var maxId = 0;
-            var local = JSON.parse(localStorage.getItem(keys[nome]) || '[]');
             local.forEach(function(x) { if (x.id > maxId) maxId = x.id; });
             var items = res.documents.map(function(d) {
               var item = { _appwriteId: d.$id };
@@ -102,16 +103,7 @@
               if (item.id > maxId) maxId = item.id;
               return item;
             });
-            var merged = items.slice();
-            local.forEach(function(l) {
-              var localMatch = merged.find(function(m) { return m._appwriteId && l._appwriteId && m._appwriteId === l._appwriteId; });
-              if (localMatch) {
-                localMatch.id = l.id;
-              } else {
-                merged.push(l);
-              }
-            });
-            localStorage.setItem(keys[nome], JSON.stringify(merged));
+            localStorage.setItem(keys[nome], JSON.stringify(items));
           }
         } catch (e) {
           console.warn('Erro ao carregar ' + nome + ':', e);
@@ -137,7 +129,7 @@
       }
     };
 
-    window.limparDuplicados = function() {
+    window.limparDuplicados = async function() {
         var clientes = getClientes();
         var contratos = getContratos();
         var vistos = {};
@@ -156,9 +148,6 @@
 
         if (!remover.length) { console.log('Nenhum duplicado encontrado.'); return; }
 
-        console.log('Duplicados encontrados (IDs a remover):', remover);
-        console.log('Mapeamento:', mapa);
-
         contratos.forEach(function(c) {
             if (mapa[c.clienteId]) {
                 c.clienteId = mapa[c.clienteId];
@@ -166,9 +155,17 @@
         });
 
         clientes = clientes.filter(function(c) { return remover.indexOf(c.id) === -1; });
+
+        for (var i = 0; i < remover.length; i++) {
+            var dupe = getClientes().find(function(c) { return c.id === remover[i]; });
+            if (dupe && dupe._appwriteId) {
+                try { await database.deleteDocument(APPWRITE_DATABASE, 'clientes', dupe._appwriteId); }
+                catch (e) { console.warn('Erro ao apagar duplicado do Appwrite:', e); }
+            }
+        }
+
         saveClientes(clientes);
         saveContratos(contratos);
-        console.log('Limpeza concluida. Clientes restantes:', clientes.length);
         renderClientes();
         renderDashboard();
     };
