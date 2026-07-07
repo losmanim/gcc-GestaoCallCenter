@@ -63,7 +63,7 @@
 
         try {
             await emailjs.send(
-                'service_mail_gcc',
+                'service_2lzvdsv',
                 'template_yodp801',
                 {
                     clienteNome: cl.nome,
