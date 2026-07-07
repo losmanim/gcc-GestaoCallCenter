@@ -18,7 +18,7 @@
         for (var i = 0; i < dados.length; i++) {
           var item = dados[i];
           var docData = {};
-          for (var k in item) { if (k !== '_appwriteId' && k !== 'id') docData[k] = item[k]; }
+          for (var k in item) { if (k !== '_appwriteId') docData[k] = item[k]; }
           var permissions = [];
           if (nome === 'aprovacoes') {
             permissions = [
