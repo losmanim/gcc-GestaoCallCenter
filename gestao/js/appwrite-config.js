@@ -1,4 +1,4 @@
-const APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1';
+const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
 const APPWRITE_PROJECT = '6a4a96ae00150f4aa36a';
 const APPWRITE_DATABASE = '6a4a97150006afe07f8a';
 
