@@ -27,7 +27,13 @@
           var docData = {};
           for (var k in item) {
             if (k !== '_appwriteId' && k !== 'id') {
-              docData[k] = (k.startsWith('data')) ? dataParaTimestamp(item[k]) : item[k];
+              if (k.startsWith('data')) {
+                docData[k] = dataParaTimestamp(item[k]);
+              } else if ((k === 'valor' || k === 'preco') && typeof item[k] === 'number') {
+                docData[k] = Math.round(item[k]);
+              } else {
+                docData[k] = item[k];
+              }
             }
           }
           var permissions = [];
